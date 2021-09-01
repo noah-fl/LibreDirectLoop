@@ -33,7 +33,7 @@ func sensorConnectionAlertMiddelware(service: SensorConnectionAlertService) -> M
     }
 }
 
-class SensorConnectionAlertService: NotificationCenterService {
+class SensorConnectionAlertService {
     enum Identifier: String {
         case sensorConnectionLost = "libre-direct.notifications.sensor-connection-lost"
     }
@@ -45,7 +45,7 @@ class SensorConnectionAlertService: NotificationCenterService {
     func sendSensorConnectionLostNotification() {
         dispatchPrecondition(condition: .onQueue(DispatchQueue.main))
         
-        ensureCanSendNotification { ensured in
+        NotificationCenterService.shared.ensureCanSendNotification { ensured in
             Log.info("Sensor connection lLost alert, ensured: \(ensured)")
             
             guard ensured else {
@@ -55,16 +55,17 @@ class SensorConnectionAlertService: NotificationCenterService {
             let notification = UNMutableNotificationContent()
             notification.title = LocalizedString("Alert, sensor connection lost", comment: "")
             notification.body = LocalizedString("The connection with the sensor has been lost. Normally this happens when the sensor is outside the possible range.", comment: "")
-            notification.sound = UNNotificationSound.init(named: UNNotificationSoundName(rawValue: "negative.aiff"))
+            notification.sound = .none
 
-            self.add(identifier: Identifier.sensorConnectionLost.rawValue, content: notification)
+            NotificationCenterService.shared.add(identifier: Identifier.sensorConnectionLost.rawValue, content: notification)
+            NotificationCenterService.shared.playNegativeSound()
         }
     }
 
     func sendSensorConnectionRestoredNotification() {
         dispatchPrecondition(condition: .onQueue(DispatchQueue.main))
         
-        ensureCanSendNotification { ensured in
+        NotificationCenterService.shared.ensureCanSendNotification { ensured in
             Log.info("Sensor connection lLost alert, ensured: \(ensured)")
             
             guard ensured else {
@@ -74,9 +75,10 @@ class SensorConnectionAlertService: NotificationCenterService {
             let notification = UNMutableNotificationContent()
             notification.title = LocalizedString("OK, sensor connection established", comment: "")
             notification.body = LocalizedString("The connection to the sensor has been successfully established and glucose data is received.", comment: "")
-            notification.sound = UNNotificationSound.init(named: UNNotificationSoundName(rawValue: "positive.aiff"))
+            notification.sound = .none
 
-            self.add(identifier: Identifier.sensorConnectionLost.rawValue, content: notification)
+            NotificationCenterService.shared.add(identifier: Identifier.sensorConnectionLost.rawValue, content: notification)
+            NotificationCenterService.shared.playPositiveSound()
         }
     }
 }

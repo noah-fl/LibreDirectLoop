@@ -33,11 +33,11 @@ func sensorGlucoseBadgeMiddelware(service: SensorGlucoseBadgeService) -> Middlew
     }
 }
 
-class SensorGlucoseBadgeService: NotificationCenterService {
+class SensorGlucoseBadgeService {
     func setGlucoseBadge(glucose: Int) {
         dispatchPrecondition(condition: .onQueue(DispatchQueue.main))
 
-        ensureCanSendNotification { ensured in
+        NotificationCenterService.shared.ensureCanSendNotification { ensured in
             Log.info("Glucose badge, ensured: \(ensured)")
 
             guard ensured else {

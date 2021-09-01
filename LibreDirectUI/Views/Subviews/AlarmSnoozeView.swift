@@ -12,8 +12,7 @@ struct AlarmSnoozeView: View {
     @EnvironmentObject var store: AppStore
 
     var body: some View {
-        
-        GroupBox(label: Text("Alarm Snooze").padding(.bottom).foregroundColor(.accentColor)) {
+        GroupBox {
             DateSelectorView(
                 key: LocalizedString("Snooze Until", comment: ""),
                 value: store.state.alarmSnoozeUntil,

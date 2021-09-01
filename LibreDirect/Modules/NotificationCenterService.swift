@@ -8,12 +8,45 @@
 import Foundation
 import UserNotifications
 import UIKit
+import AVFoundation
 
-class NotificationCenterService: NSObject {
+class NotificationCenterService {
+    private static var audio: AVPlayer?
+    static let shared = NotificationCenterService()
+
+    private init() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .allowAirPlay])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let error {
+            Log.info("NotificationCenter, error: \(error.localizedDescription)")
+        }
+    }
+
+    func playSilentSound() {
+        playSound(named: "silent")
+    }
+
+    func playAlarmSound() {
+        playSound(named: "alarm")
+    }
+
+    func playExpiringSound() {
+        playSound(named: "expiring")
+    }
+
+    func playNegativeSound() {
+        playSound(named: "negative")
+    }
+
+    func playPositiveSound() {
+        playSound(named: "positive")
+    }
+
     func add(identifier: String, content: UNMutableNotificationContent) {
         let center = UNUserNotificationCenter.current()
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
-        
+
         Log.info("NotificationCenter, identifier: \(identifier)")
         Log.info("NotificationCenter, content: \(content)")
 
@@ -32,6 +65,13 @@ class NotificationCenterService: NSObject {
                 completion(false)
             }
         }
+    }
+
+    private func playSound(named: String) {
+        guard let soundURL = FrameworkBundle.main.url(forResource: named, withExtension: "aiff") else { return }
+
+        NotificationCenterService.audio = AVPlayer.init(url: soundURL)
+        NotificationCenterService.audio?.play()
     }
 }
 

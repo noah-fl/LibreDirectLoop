@@ -54,7 +54,7 @@ func sensorExpiringAlertMiddelware(service: SensorExpiringAlertService) -> Middl
     }
 }
 
-class SensorExpiringAlertService: NotificationCenterService {
+class SensorExpiringAlertService {
     var nextExpiredAlert: Date? = nil
     var lastExpiringAlert: String = ""
     
@@ -75,7 +75,7 @@ class SensorExpiringAlertService: NotificationCenterService {
         
         nextExpiredAlert = Date().addingTimeInterval(AppConfig.ExpiredNotificationInterval)
 
-        ensureCanSendNotification { ensured in
+        NotificationCenterService.shared.ensureCanSendNotification { ensured in
             Log.info("Sensor expired alert, ensured: \(ensured)")
             
             guard ensured else {
@@ -85,9 +85,10 @@ class SensorExpiringAlertService: NotificationCenterService {
             let notification = UNMutableNotificationContent()
             notification.title = LocalizedString("Alert, sensor expired", comment: "")
             notification.body = LocalizedString("Your sensor has expired and needs to be replaced as soon as possible", comment: "")
-            notification.sound = UNNotificationSound.init(named: UNNotificationSoundName(rawValue: "alarm.aiff"))
+            notification.sound = .none
 
-            self.add(identifier: Identifier.sensorExpiring.rawValue, content: notification)
+            NotificationCenterService.shared.add(identifier: Identifier.sensorExpiring.rawValue, content: notification)
+            NotificationCenterService.shared.playAlarmSound()
         }
     }
        
@@ -105,7 +106,7 @@ class SensorExpiringAlertService: NotificationCenterService {
         lastExpiringAlert = body
         nextExpiredAlert = Date().addingTimeInterval(AppConfig.ExpiredNotificationInterval)
 
-        ensureCanSendNotification { ensured in
+        NotificationCenterService.shared.ensureCanSendNotification { ensured in
             Log.info("Sensor expired alert, ensured: \(ensured)")
             
             guard ensured else {
@@ -115,12 +116,13 @@ class SensorExpiringAlertService: NotificationCenterService {
             let notification = UNMutableNotificationContent()
             notification.title = LocalizedString("Alert, sensor expiring soon", comment: "")
             notification.body = body
+            notification.sound = .none
+            
+            NotificationCenterService.shared.add(identifier: Identifier.sensorExpiring.rawValue, content: notification)
             
             if withSound {
-                notification.sound = UNNotificationSound.init(named: UNNotificationSoundName(rawValue: "expiring.aiff"))
+                NotificationCenterService.shared.playExpiringSound()
             }
-
-            self.add(identifier: Identifier.sensorExpiring.rawValue, content: notification)
         }
     }
 }

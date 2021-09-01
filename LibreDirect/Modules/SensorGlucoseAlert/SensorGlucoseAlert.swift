@@ -51,7 +51,7 @@ func sensorGlucoseAlertMiddelware(service: SensorGlucoseAlertService) -> Middlew
     }
 }
 
-class SensorGlucoseAlertService: NotificationCenterService {
+class SensorGlucoseAlertService {
     enum Identifier: String {
         case sensorGlucoseAlert = "libre-direct.notifications.sensor-glucose-alert"
     }
@@ -63,7 +63,7 @@ class SensorGlucoseAlertService: NotificationCenterService {
     func sendLowGlucoseNotification(glucose: String) {
         dispatchPrecondition(condition: .onQueue(DispatchQueue.main))
 
-        ensureCanSendNotification { ensured in
+        NotificationCenterService.shared.ensureCanSendNotification { ensured in
             Log.info("Glucose alert, ensured: \(ensured)")
 
             guard ensured else {
@@ -73,16 +73,17 @@ class SensorGlucoseAlertService: NotificationCenterService {
             let notification = UNMutableNotificationContent()
             notification.title = LocalizedString("Alert, low blood glucose", comment: "")
             notification.body = String(format: LocalizedString("Your blood sugar %1$@ is dangerously low. With sweetened drinks or dextrose, blood glucose levels can often return to normal.", comment: ""), glucose)
-            notification.sound = UNNotificationSound.init(named: UNNotificationSoundName(rawValue: "alarm.aiff"))
+            notification.sound = .none
 
-            self.add(identifier: Identifier.sensorGlucoseAlert.rawValue, content: notification)
+            NotificationCenterService.shared.add(identifier: Identifier.sensorGlucoseAlert.rawValue, content: notification)
+            NotificationCenterService.shared.playAlarmSound()
         }
     }
 
     func sendHighGlucoseNotification(glucose: String) {
         dispatchPrecondition(condition: .onQueue(DispatchQueue.main))
 
-        ensureCanSendNotification { ensured in
+        NotificationCenterService.shared.ensureCanSendNotification { ensured in
             Log.info("Glucose alert, ensured: \(ensured)")
 
             guard ensured else {
@@ -92,9 +93,10 @@ class SensorGlucoseAlertService: NotificationCenterService {
             let notification = UNMutableNotificationContent()
             notification.title = LocalizedString("Alert, high blood sugar", comment: "")
             notification.body = String(format: LocalizedString("Your blood sugar %1$@ is dangerously high and needs to be treated.", comment: ""), glucose)
-            notification.sound = UNNotificationSound.init(named: UNNotificationSoundName(rawValue: "alarm.aiff"))
+            notification.sound = .none
 
-            self.add(identifier: Identifier.sensorGlucoseAlert.rawValue, content: notification)
+            NotificationCenterService.shared.add(identifier: Identifier.sensorGlucoseAlert.rawValue, content: notification)
+            NotificationCenterService.shared.playAlarmSound()
         }
     }
 }
