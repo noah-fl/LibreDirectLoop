@@ -48,11 +48,15 @@ class LibreDirectViewLoader: UINavigationController, CGMManagerOnboarding, Compl
         guard let cgmManager = cgmManager else {
             fatalError()
         }
+        
+        guard let store = cgmManager.store else {
+            fatalError()
+        }
 
         let view = LibreDirectView(doneCompletionHandler: { () -> Void in
             self.completionDelegate?.completionNotifyingDidComplete(self)
         }, deleteCompletionHandler: { () -> Void in
-            cgmManager.store.dispatch(.disconnectSensor)
+            cgmManager.store = nil
             
             UserDefaults.appGroup.glucoseValues = []
             UserDefaults.appGroup.sensor = nil
@@ -62,7 +66,7 @@ class LibreDirectViewLoader: UINavigationController, CGMManagerOnboarding, Compl
                     self.completionDelegate?.completionNotifyingDidComplete(self)
                 }
             }
-        }).environmentObject(cgmManager.store)
+        }).environmentObject(store)
         
         return viewController(rootView: view)
     }

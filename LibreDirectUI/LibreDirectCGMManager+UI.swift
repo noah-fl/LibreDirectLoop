@@ -24,7 +24,7 @@ extension LibreDirectCGMManager: CGMManagerUI {
     }
 
     public var smallImage: UIImage? {
-        return nil
+        return UIImage(named: "sensor", in: Bundle(for: LibreDirectCGMManager.self), compatibleWith: nil)!
     }
 
     // TODO Placeholder.

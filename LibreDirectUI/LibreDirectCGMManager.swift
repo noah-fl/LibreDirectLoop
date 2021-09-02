@@ -11,53 +11,52 @@ import HealthKit
 import Combine
 
 public class LibreDirectCGMManager: CGMManager {
-    private var cancellable: AnyCancellable?
+    init() {
+        store = AppStore(initialState: DefaultAppState(), reducer: defaultAppReducer, middlewares: [
+                libre2Middelware(),
+                sensorExpiringAlertMiddelware(),
+                sensorGlucoseAlertMiddelware(),
+                sensorGlucoseBadgeMiddelware(),
+                sensorConnectionAlertMiddelware(),
+                loopMiddleware(updateHandler: { (value) -> Void in
+                    guard self.latestReading == nil || self.latestReading?.id != value.id else {
+                        return
+                    }
+
+                    let loopGlucose = NewGlucoseSample(date: value.startDate, quantity: value.quantity, trend: value.trendType, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: value.id.description, device: self.device)
+                    let loopGlucoseResult: CGMReadingResult = .newData([loopGlucose])
+
+                    self.latestReading = value
+                    self.delegateQueue.async {
+                        self.cgmManagerDelegate?.cgmManager(self, hasNew: loopGlucoseResult)
+                    }
+                }),
+                actionLogMiddleware()
+            ])
+    }
 
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
 
-        store.dispatch(.subscribeForUpdates)
+        store?.dispatch(.subscribeForUpdates)
 
-        if self.store.state.isPaired {
+        if self.store?.state.isPaired ?? false {
             DispatchQueue.global(qos: .utility).async {
                 Thread.sleep(forTimeInterval: 3)
 
                 DispatchQueue.main.sync {
                     Log.debug("connectSensor")
-                    self.store.dispatch(.connectSensor)
-                }
-            }
-        }
-
-        cancellable = store.$state.receive(on: self.delegateQueue).sink { state in
-            if let lastGlucose = state.lastGlucose {
-                guard self.latestReading == nil || self.latestReading?.id != lastGlucose.id else {
-                    return
-                }
-
-                let loopGlucose = NewGlucoseSample(date: lastGlucose.startDate, quantity: lastGlucose.quantity, trend: lastGlucose.trendType, isDisplayOnly: false, wasUserEntered: false, syncIdentifier: lastGlucose.id.description, device: self.device)
-                let loopGlucoseResult: CGMReadingResult = .newData([loopGlucose])
-
-                self.latestReading = lastGlucose
-                self.delegateQueue.async {
-                    self.cgmManagerDelegate?.cgmManager(self, hasNew: loopGlucoseResult)
+                    self.store?.dispatch(.connectSensor)
                 }
             }
         }
     }
 
-    public let managerIdentifier: String = "LibreDirect"
-
-    let store: AppStore = AppStore(initialState: DefaultAppState(), reducer: defaultAppReducer, middlewares: [
-            libre2Middelware(),
-            sensorExpiringAlertMiddelware(),
-            sensorGlucoseAlertMiddelware(),
-            sensorGlucoseBadgeMiddelware(),
-            sensorConnectionAlertMiddelware(),
-            actionLogMiddleware()
-        ])
-
+    let shareManager = ShareClientManager()
+    var store: AppStore? = nil
     var latestReading: SensorGlucose?
+
+    public let managerIdentifier: String = "LibreDirect"
 
     public var rawState: CGMManager.RawStateValue {
         return [:]
@@ -87,8 +86,6 @@ public class LibreDirectCGMManager: CGMManager {
     public let providesBLEHeartbeat = true
     public let managedDataInterval: TimeInterval? = nil
     public let hasValidSensorSession = true
-
-    let shareManager = ShareClientManager()
 
     public var glucoseDisplay: GlucoseDisplayable? {
         return latestReading

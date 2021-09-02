@@ -79,11 +79,13 @@
 		E22B6BC826D6C7BE00737507 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BC426D6C7BE00737507 /* AppConfig.swift */; };
 		E22B6BC926D6C7BE00737507 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BC526D6C7BE00737507 /* AppState.swift */; };
 		E22B6BCA26D6C7BE00737507 /* AppAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BC626D6C7BE00737507 /* AppAction.swift */; };
+		E23661C226E14F75007BA6CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E23661C126E14F75007BA6CA /* Assets.xcassets */; };
 		E25A47DB26CFC600006864BC /* copy-frameworks.sh in Resources */ = {isa = PBXBuildFile; fileRef = E25A47D926CFC600006864BC /* copy-frameworks.sh */; };
 		E25A47DD26CFC615006864BC /* copy-frameworks.sh in Resources */ = {isa = PBXBuildFile; fileRef = E25A47D926CFC600006864BC /* copy-frameworks.sh */; };
 		E267021226D3D37F00F121CE /* LibreDirectViewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E267021126D3D37F00F121CE /* LibreDirectViewLoader.swift */; };
 		E2B3E09426D8B60300F17EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2B3E09626D8B60300F17EE0 /* Localizable.strings */; };
 		E2B3E09B26D8B6F700F17EE0 /* SensorGlucose+Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B3E09A26D8B6F700F17EE0 /* SensorGlucose+Loop.swift */; };
+		E2C8137926DFD2CE002009EB /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C8137826DFD2CE002009EB /* Loop.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,12 +176,14 @@
 		E22B6BC426D6C7BE00737507 /* AppConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		E22B6BC526D6C7BE00737507 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		E22B6BC626D6C7BE00737507 /* AppAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppAction.swift; sourceTree = "<group>"; };
+		E23661C126E14F75007BA6CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E25A47D926CFC600006864BC /* copy-frameworks.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "copy-frameworks.sh"; sourceTree = "<group>"; };
 		E25A47DA26CFC600006864BC /* capture-build-details.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "capture-build-details.sh"; sourceTree = "<group>"; };
 		E267021126D3D37F00F121CE /* LibreDirectViewLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibreDirectViewLoader.swift; sourceTree = "<group>"; };
 		E2B3E09526D8B60300F17EE0 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E2B3E09726D8B60800F17EE0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E2B3E09A26D8B6F700F17EE0 /* SensorGlucose+Loop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SensorGlucose+Loop.swift"; sourceTree = "<group>"; };
+		E2C8137826DFD2CE002009EB /* Loop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -375,6 +379,7 @@
 				E22B6B9C26D6C60300737507 /* ActionLog */,
 				E22B6B9D26D6C60C00737507 /* FreeAPS */,
 				E22B6B9E26D6C61400737507 /* Libre2 */,
+				E2C8137726DFD2A9002009EB /* Loop */,
 				E22B6B9F26D6C61B00737507 /* Nightscout */,
 				E22B6BA126D6C62A00737507 /* SensorConnectionAlert */,
 				E22B6BA226D6C63200737507 /* SensorExpiringAlert */,
@@ -464,6 +469,7 @@
 				E267021126D3D37F00F121CE /* LibreDirectViewLoader.swift */,
 				E207619226D3C0AD00023484 /* Views */,
 				E208F72126D8DFC7002FBB63 /* Extensions */,
+				E23661C126E14F75007BA6CA /* Assets.xcassets */,
 			);
 			path = LibreDirectUI;
 			sourceTree = "<group>";
@@ -475,6 +481,14 @@
 				E25A47DA26CFC600006864BC /* capture-build-details.sh */,
 			);
 			path = Scripts;
+			sourceTree = "<group>";
+		};
+		E2C8137726DFD2A9002009EB /* Loop */ = {
+			isa = PBXGroup;
+			children = (
+				E2C8137826DFD2CE002009EB /* Loop.swift */,
+			);
+			path = Loop;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -600,6 +614,7 @@
 				E2104ABE26D762C90065B46A /* positive.aiff in Resources */,
 				E25A47DB26CFC600006864BC /* copy-frameworks.sh in Resources */,
 				E2104ABD26D762C90065B46A /* alarm.aiff in Resources */,
+				E23661C226E14F75007BA6CA /* Assets.xcassets in Resources */,
 				E2104ABC26D762C90065B46A /* expiring.aiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -691,6 +706,7 @@
 				E22B6B8026D6C5CA00737507 /* SensorCalibration.swift in Sources */,
 				E22B6BB126D6C67300737507 /* SensorGlucoseAlert.swift in Sources */,
 				E22B6BB726D6C68B00737507 /* NotificationCenterService.swift in Sources */,
+				E2C8137926DFD2CE002009EB /* Loop.swift in Sources */,
 				E22B6BC726D6C7BE00737507 /* AppStore.swift in Sources */,
 				E20761B326D3C0FB00023484 /* NumberSelectorView.swift in Sources */,
 				E22B6B8526D6C5CA00737507 /* SensorGlucose.swift in Sources */,
