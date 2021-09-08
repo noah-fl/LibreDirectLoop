@@ -71,6 +71,9 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
     case .setSensorError(errorMessage: let errorMessage, errorTimestamp: let errorTimestamp):
         state.connectionError = errorMessage
         state.connectionErrorTimeStamp = errorTimestamp
+        
+    case .setNightscoutUpload(enabled: let enabled):
+        state.nightscoutUpload = enabled
 
     case .setNightscoutHost(host: let host):
         state.nightscoutHost = host
@@ -90,6 +93,9 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
     case .setAlarmSnoozeUntil(value: let value):
         if let value = value {
             state.alarmSnoozeUntil = value
+            
+            // stop sounds
+            NotificationCenterService.shared.stopSound()
         } else {
             state.alarmSnoozeUntil = nil
         }

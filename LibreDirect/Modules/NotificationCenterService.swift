@@ -11,7 +11,7 @@ import UIKit
 import AVFoundation
 
 class NotificationCenterService {
-    private static var audio: AVPlayer?
+    private var player: AVPlayer?
     static let shared = NotificationCenterService()
 
     private init() {
@@ -21,6 +21,14 @@ class NotificationCenterService {
         } catch let error {
             Log.info("NotificationCenter, error: \(error.localizedDescription)")
         }
+    }
+    
+    func stopSound() {
+        guard let player = player else {
+            return
+        }
+        
+        player.pause()
     }
 
     func playSilentSound() {
@@ -70,8 +78,10 @@ class NotificationCenterService {
     private func playSound(named: String) {
         guard let soundURL = FrameworkBundle.main.url(forResource: named, withExtension: "aiff") else { return }
 
-        NotificationCenterService.audio = AVPlayer.init(url: soundURL)
-        NotificationCenterService.audio?.play()
+        let player = AVPlayer.init(url: soundURL)
+        player.play()
+        
+        self.player = player
     }
 }
 

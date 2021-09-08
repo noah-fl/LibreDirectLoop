@@ -12,21 +12,22 @@ public enum AppAction {
     case disconnectSensor
     case pairSensor
     case resetSensor
-
-    case setSensor(value: Sensor)
-    case setSensorConnection(connectionState: SensorConnectionState)
-    case setSensorReading(glucose: SensorGlucose)
-    case setSensorAge(sensorAge: Int)
-    case setSensorError(errorMessage: String, errorTimestamp: Date)
-
-    case setNightscoutHost(host: String)
-    case setNightscoutSecret(apiSecret: String)
     
-    case setAlarmLow(value: Int)
     case setAlarmHigh(value: Int)
+    case setAlarmLow(value: Int)
     case setAlarmSnoozeUntil(value: Date?)
     
     case setGlucoseUnit(value: GlucoseUnit)
-
+    case setNightscoutUpload(enabled: Bool)
+    case setNightscoutHost(host: String)
+    case setNightscoutSecret(apiSecret: String)
+    
+    case setSensor(value: Sensor)
+    case setSensorAge(sensorAge: Int)
+    case setSensorConnection(connectionState: SensorConnectionState)
+    case setSensorError(errorMessage: String, errorTimestamp: Date)
+    case setSensorReading(glucose: SensorGlucose)
+    
     case subscribeForUpdates
 }
+

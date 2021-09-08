@@ -20,6 +20,7 @@ public protocol AppState {
     var connectionState: SensorConnectionState { get set }
     var glucoseUnit: GlucoseUnit { get set }
     var glucoseValues: [SensorGlucose] { get set }
+    var nightscoutUpload: Bool { get set }
     var nightscoutApiSecret: String { get set }
     var nightscoutHost: String { get set }
     var sensor: Sensor? { get set }
@@ -62,3 +63,4 @@ public extension AppState {
         }
     }
 }
+

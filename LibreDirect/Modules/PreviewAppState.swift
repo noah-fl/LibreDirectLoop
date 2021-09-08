@@ -45,6 +45,7 @@ public struct PreviewAppState: AppState {
         SensorGlucose(timeStamp: Date(), glucose: 100)
     ]
     
+    public var nightscoutUpload: Bool = false
     public var nightscoutApiSecret: String = ""
     public var nightscoutHost: String = ""
     public var sensor: Sensor? = createPreviewSensor()

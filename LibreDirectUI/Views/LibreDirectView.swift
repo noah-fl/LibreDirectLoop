@@ -37,6 +37,7 @@ struct LibreDirectView: View {
                 DetailsView(sensor: store.state.sensor).padding([.top, .horizontal])
 
                 AlarmSettingsView().padding([.top, .horizontal])
+                NightscoutSettingsView().padding([.top, .horizontal])
                 ActionsView().padding([.top, .horizontal])
             }
         }
@@ -53,3 +54,4 @@ struct ContentView_Previews: PreviewProvider {
         }
     }
 }
+
