@@ -14,29 +14,35 @@ public func sensorGlucoseAlertMiddelware() -> Middleware<AppState, AppAction> {
 }
 
 func sensorGlucoseAlertMiddelware(service: SensorGlucoseAlertService) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
             var isSnoozed = false
 
-            if let snoozeUntil = state.alarmSnoozeUntil, Date() < snoozeUntil {
+            if let snoozeUntil = store.state.alarmSnoozeUntil, Date() < snoozeUntil {
                 Log.info("Glucose alert snoozed until \(snoozeUntil.localTime)")
                 isSnoozed = true
             }
 
-            if glucose.glucoseFiltered < state.alarmLow {
+            if glucose.glucoseFiltered < store.state.alarmLow {
                 if !isSnoozed {
-                    Log.info("Glucose alert, low: \(glucose.glucoseFiltered) < \(state.alarmLow)")
+                    Log.info("Glucose alert, low: \(glucose.glucoseFiltered) < \(store.state.alarmLow)")
 
-                    service.sendLowGlucoseNotification(glucose: glucose.glucoseFiltered.asGlucose(unit: state.glucoseUnit))
-                    return Just(AppAction.setAlarmSnoozeUntil(value: Date().addingTimeInterval(5 * 60).rounded(on: 1, .minute))).eraseToAnyPublisher()
+                    service.sendLowGlucoseNotification(glucose: glucose.glucoseFiltered.asGlucose(unit: store.state.glucoseUnit))
+                    
+                    DispatchQueue.main.async {
+                        store.dispatch(.setAlarmSnoozeUntil(value: Date().addingTimeInterval(5 * 60).rounded(on: 1, .minute)))
+                    }
                 }
-            } else if glucose.glucoseFiltered > state.alarmHigh {
+            } else if glucose.glucoseFiltered > store.state.alarmHigh {
                 if !isSnoozed {
-                    Log.info("Glucose alert, high: \(glucose.glucoseFiltered) > \(state.alarmHigh)")
+                    Log.info("Glucose alert, high: \(glucose.glucoseFiltered) > \(store.state.alarmHigh)")
 
-                    service.sendHighGlucoseNotification(glucose: glucose.glucoseFiltered.asGlucose(unit: state.glucoseUnit))
-                    return Just(AppAction.setAlarmSnoozeUntil(value: Date().addingTimeInterval(5 * 60).rounded(on: 1, .minute))).eraseToAnyPublisher()
+                    service.sendHighGlucoseNotification(glucose: glucose.glucoseFiltered.asGlucose(unit: store.state.glucoseUnit))
+                    
+                    DispatchQueue.main.async {
+                        store.dispatch(.setAlarmSnoozeUntil(value: Date().addingTimeInterval(5 * 60).rounded(on: 1, .minute)))
+                    }
                 }
             } else {
                 service.clearNotifications()

@@ -27,7 +27,5 @@ public enum AppAction {
     case setSensorConnection(connectionState: SensorConnectionState)
     case setSensorError(errorMessage: String, errorTimestamp: Date)
     case setSensorReading(glucose: SensorGlucose)
-    
-    case subscribeForUpdates
 }
 

@@ -14,7 +14,7 @@ import Combine
 //https://danielbernal.co/redux-like-architecture-with-swiftui-real-world-app/
 
 public typealias Reducer<State, Action> = (inout State, Action) -> Void
-public typealias Middleware<State, Action> = (State, Action, State) -> AnyPublisher<Action, Never>?
+public typealias Middleware<State, Action> = (Store<State, Action>, Action, State) -> AnyPublisher<Action, Never>?
 
 public final class Store<State, Action>: ObservableObject {
     // Read-only access to app state
@@ -40,7 +40,7 @@ public final class Store<State, Action>: ObservableObject {
 
         // Dispatch all middleware functions
         for mw in middlewares {
-            guard let middleware = mw(state, action, lastState) else {
+            guard let middleware = mw(self, action, lastState) else {
                 break
             }
 

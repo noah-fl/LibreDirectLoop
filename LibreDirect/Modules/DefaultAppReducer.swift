@@ -81,9 +81,6 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
     case .setNightscoutSecret(apiSecret: let apiSecret):
         state.nightscoutApiSecret = apiSecret
 
-    case .subscribeForUpdates:
-        break
-
     case .setAlarmLow(value: let value):
         state.alarmLow = value
 

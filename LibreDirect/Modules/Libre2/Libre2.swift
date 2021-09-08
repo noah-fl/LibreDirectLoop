@@ -16,37 +16,43 @@ public func libre2Middelware() -> Middleware<AppState, AppAction> {
 
 @available(iOS 13.0, *)
 fileprivate func libre2Middelware(pairingService: Libre2PairingProtocol, connectionService: Libre2ConnectionProtocol) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .pairSensor:
-            return pairingService.pairSensor()
-                .subscribe(on: DispatchQueue.main)
-                .map { AppAction.setSensor(value: Sensor(uuid: $0.uuid, patchInfo: $0.patchInfo, fram: $0.fram)) }
-                .eraseToAnyPublisher()
-
-        case .subscribeForUpdates:
-            return connectionService.subscribeForUpdates()
-                .subscribe(on: DispatchQueue.main)
-                .map {
-                if let connectionUpdate = $0 as? Libre2ConnectionUpdate {
-                    return AppAction.setSensorConnection(connectionState: connectionUpdate.connectionState)
-
-                } else if let readingUpdate = $0 as? Libre2GlucoseUpdate {
-                    return AppAction.setSensorReading(glucose: readingUpdate.glucose)
-
-                } else if let ageUpdate = $0 as? Libre2AgeUpdate {
-                    return AppAction.setSensorAge(sensorAge: ageUpdate.sensorAge)
-
-                } else if let errorUpdate = $0 as? Libre2ErrorUpdate {
-                    return AppAction.setSensorError(errorMessage: errorUpdate.errorMessage, errorTimestamp: errorUpdate.errorTimestamp)
+            pairingService.pairSensor(completionHandler: { (uuid, patchInfo, fram, streamingEnabled) -> Void in
+                if streamingEnabled {
+                    DispatchQueue.main.async {
+                        store.dispatch(.setSensor(value: Sensor(uuid: uuid, patchInfo: patchInfo, fram: fram)))
+                        store.dispatch(.connectSensor)
+                    }
                 }
-
-                return AppAction.setSensorError(errorMessage: "Unknown error", errorTimestamp: Date())
-            }.eraseToAnyPublisher()
+            })
 
         case .connectSensor:
-            if let sensor = state.sensor {
-                connectionService.connectSensor(sensor: sensor)
+            if let sensor = store.state.sensor {
+                connectionService.connectSensor(sensor: sensor, completionHandler: { (update) -> Void in
+                    var action: AppAction? = nil
+                    
+                    if let connectionUpdate = update as? Libre2ConnectionUpdate {
+                        action = .setSensorConnection(connectionState: connectionUpdate.connectionState)
+
+                    } else if let readingUpdate = update as? Libre2GlucoseUpdate {
+                        action = .setSensorReading(glucose: readingUpdate.glucose)
+
+                    } else if let ageUpdate = update as? Libre2AgeUpdate {
+                        action = .setSensorAge(sensorAge: ageUpdate.sensorAge)
+                        
+                    } else if let errorUpdate = update as? Libre2ErrorUpdate {
+                        action = .setSensorError(errorMessage: errorUpdate.errorMessage, errorTimestamp: errorUpdate.errorTimestamp)
+                        
+                    }
+                    
+                    if let action = action {
+                        DispatchQueue.main.async {
+                            store.dispatch(action)
+                        }
+                    }
+                })
             }
 
         case .disconnectSensor:

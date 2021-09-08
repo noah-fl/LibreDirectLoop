@@ -12,7 +12,7 @@ import Combine
 public typealias LoopUpdateHandler = (_ value: SensorGlucose) -> Void
 
 public func loopMiddleware(updateHandler: @escaping LoopUpdateHandler) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
             updateHandler(glucose)

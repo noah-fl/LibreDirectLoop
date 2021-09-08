@@ -14,7 +14,7 @@ public func sensorConnectionAlertMiddelware() -> Middleware<AppState, AppAction>
 }
 
 func sensorConnectionAlertMiddelware(service: SensorConnectionAlertService) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorConnection(connectionState: let connectionState):
             Log.info("Sensor connection lost alert check: \(connectionState)")

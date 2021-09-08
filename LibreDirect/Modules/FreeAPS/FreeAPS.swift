@@ -13,7 +13,7 @@ public func freeAPSMiddleware() -> Middleware<AppState, AppAction> {
 }
 
 fileprivate func freeAPSMiddleware(service: FreeAPSService) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
             service.addGlucose(glucoseValues: [glucose])
