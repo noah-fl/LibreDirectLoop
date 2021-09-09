@@ -20,10 +20,12 @@ fileprivate func libre2Middelware(pairingService: Libre2PairingProtocol, connect
         switch action {
         case .pairSensor:
             pairingService.pairSensor(completionHandler: { (uuid, patchInfo, fram, streamingEnabled) -> Void in
+                let dispatch = store.dispatch
+                
                 if streamingEnabled {
                     DispatchQueue.main.async {
-                        store.dispatch(.setSensor(value: Sensor(uuid: uuid, patchInfo: patchInfo, fram: fram)))
-                        store.dispatch(.connectSensor)
+                        dispatch(.setSensor(value: Sensor(uuid: uuid, patchInfo: patchInfo, fram: fram)))
+                        dispatch(.connectSensor)
                     }
                 }
             })
@@ -31,6 +33,7 @@ fileprivate func libre2Middelware(pairingService: Libre2PairingProtocol, connect
         case .connectSensor:
             if let sensor = store.state.sensor {
                 connectionService.connectSensor(sensor: sensor, completionHandler: { (update) -> Void in
+                    let dispatch = store.dispatch
                     var action: AppAction? = nil
                     
                     if let connectionUpdate = update as? Libre2ConnectionUpdate {
@@ -49,7 +52,7 @@ fileprivate func libre2Middelware(pairingService: Libre2PairingProtocol, connect
                     
                     if let action = action {
                         DispatchQueue.main.async {
-                            store.dispatch(action)
+                            dispatch(action)
                         }
                     }
                 })
