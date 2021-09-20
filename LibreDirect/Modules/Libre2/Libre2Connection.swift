@@ -87,7 +87,7 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
     override init() {
         super.init()
 
-        manager = CBCentralManager(delegate: self, queue: managerQueue, options: nil)
+        manager = CBCentralManager(delegate: self, queue: managerQueue, options: [CBCentralManagerOptionShowPowerAlertKey: true])
     }
 
     func subscribeForUpdates() -> AnyPublisher<Libre2Update, Never> {
@@ -161,6 +161,12 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
             sendUpdate(connectionState: .disconnected)
         }
     }
+    
+    private func connect() {
+        if let peripheral = self.peripheral {
+            connect(peripheral)
+        }
+    }
 
     private func connect(_ peripheral: CBPeripheral) {
         dispatchPrecondition(condition: .onQueue(managerQueue))
@@ -172,9 +178,9 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         }
 
         self.peripheral = peripheral
-
-        sendUpdate(connectionState: .connecting)
         manager.connect(peripheral, options: nil)
+        
+        sendUpdate(connectionState: .connecting)
     }
 
     private func unlock() -> Data? {
@@ -332,7 +338,7 @@ extension Libre2ConnectionService: CBCentralManagerDelegate {
             return
         }
 
-        connect(peripheral)
+        connect()
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -346,7 +352,7 @@ extension Libre2ConnectionService: CBCentralManagerDelegate {
             return
         }
 
-        connect(peripheral)
+        connect()
     }
 }
 
