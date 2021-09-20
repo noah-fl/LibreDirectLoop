@@ -39,6 +39,12 @@ public struct DefaultAppState: AppState {
             UserDefaults.appGroup.lastGlucose = glucoseValues.last
         }
     }
+    
+    public var nightscoutUpload: Bool = false {
+        didSet {
+            UserDefaults.appGroup.nightscoutUpload = nightscoutUpload
+        }
+    }
 
     public var nightscoutApiSecret: String = "" {
         didSet {
@@ -68,6 +74,7 @@ public struct DefaultAppState: AppState {
         }
         
         self.glucoseValues = UserDefaults.appGroup.glucoseValues
+        self.nightscoutUpload = UserDefaults.appGroup.nightscoutUpload
         self.nightscoutApiSecret = UserDefaults.appGroup.nightscoutApiSecret
         self.nightscoutHost = UserDefaults.appGroup.nightscoutHost
         self.glucoseUnit = UserDefaults.appGroup.glucoseUnit

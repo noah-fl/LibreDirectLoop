@@ -17,7 +17,7 @@ extension SensorGlucose : GlucoseValue {
     }
     
     public var startDate: Date {
-        return timeStamp
+        return timestamp
     }
 }
 

@@ -322,11 +322,11 @@
 		E2104AB726D762AD0065B46A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				E22B262426DF697100ABD1EE /* silent.aiff */,
 				E2104AB926D762C90065B46A /* alarm.aiff */,
 				E2104AB826D762C90065B46A /* expiring.aiff */,
 				E2104ABB26D762C90065B46A /* negative.aiff */,
 				E2104ABA26D762C90065B46A /* positive.aiff */,
+				E22B262426DF697100ABD1EE /* silent.aiff */,
 				E2B3E09626D8B60300F17EE0 /* Localizable.strings */,
 			);
 			path = Resources;

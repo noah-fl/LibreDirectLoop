@@ -32,19 +32,20 @@ public struct PreviewAppState: AppState {
     public var connectionState: SensorConnectionState = .connected
     public var glucoseUnit: GlucoseUnit = GlucoseUnit.mgdL
     public var glucoseValues: [SensorGlucose] = [
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-30 * 60), glucose: 60),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-25 * 60), glucose: 65),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-15 * 60), glucose: 70),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-11 * 60), glucose: 75),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-7 * 60), glucose: 80),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-5 * 60), glucose: 85),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-4 * 60), glucose: 90),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-3 * 60), glucose: 100),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-2 * 60), glucose: 120),
-        SensorGlucose(timeStamp: Date().addingTimeInterval(-1 * 60), glucose: 110),
-        SensorGlucose(timeStamp: Date(), glucose: 100)
+        SensorGlucose(timestamp: Date().addingTimeInterval(-30 * 60), glucose: 60),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-25 * 60), glucose: 65),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-15 * 60), glucose: 70),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-11 * 60), glucose: 75),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-7 * 60), glucose: 80),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-5 * 60), glucose: 85),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-4 * 60), glucose: 90),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-3 * 60), glucose: 100),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-2 * 60), glucose: 120),
+        SensorGlucose(timestamp: Date().addingTimeInterval(-1 * 60), glucose: 110),
+        SensorGlucose(timestamp: Date(), glucose: 100)
     ]
     
+    public var nightscoutUpload: Bool = false
     public var nightscoutApiSecret: String = ""
     public var nightscoutHost: String = ""
     public var sensor: Sensor? = createPreviewSensor()

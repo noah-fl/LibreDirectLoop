@@ -38,8 +38,6 @@ public class LibreDirectCGMManager: CGMManager {
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
 
-        store?.dispatch(.subscribeForUpdates)
-
         if self.store?.state.isPaired ?? false {
             DispatchQueue.global(qos: .utility).async {
                 Thread.sleep(forTimeInterval: 3)
@@ -82,11 +80,14 @@ public class LibreDirectCGMManager: CGMManager {
 
     public let localizedTitle = NSLocalizedString("LibreDirect", comment: "CGM display title")
     public let isOnboarded = true // No distinction between created and onboarded
-    public let shouldSyncToRemoteService = false
     public let providesBLEHeartbeat = true
     public let managedDataInterval: TimeInterval? = nil
     public let hasValidSensorSession = true
 
+    public var shouldSyncToRemoteService: Bool {
+        return store?.state.nightscoutUpload ?? false
+    }
+    
     public var glucoseDisplay: GlucoseDisplayable? {
         return latestReading
     }
@@ -132,3 +133,4 @@ extension LibreDirectCGMManager {
     public func getSoundBaseURL() -> URL? { return nil }
     public func getSounds() -> [Alert.Sound] { return [] }
 }
+

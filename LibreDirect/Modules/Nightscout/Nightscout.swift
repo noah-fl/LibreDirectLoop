@@ -13,17 +13,21 @@ public func nightscoutMiddleware() -> Middleware<AppState, AppAction> {
 }
 
 func nightscoutMiddleware(service: NightscoutService) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
-            let minutes = Calendar.current.component(.minute, from: glucose.timeStamp)
+            guard store.state.nightscoutUpload else {
+                break
+            }
+            
+            let minutes = Calendar.current.component(.minute, from: glucose.timestamp)
 
             guard minutes % 5 == 0 else {
                 break
             }
 
-            let nightscoutHost = state.nightscoutHost
-            let nightscoutApiSecret = state.nightscoutApiSecret
+            let nightscoutHost = store.state.nightscoutHost
+            let nightscoutApiSecret = store.state.nightscoutApiSecret
 
             guard !nightscoutHost.isEmpty else {
                 break
@@ -86,13 +90,13 @@ fileprivate extension SensorGlucose {
         let nightscout: [String: Any] = [
             "_id": id,
             "device": "LibreDirect",
-            "date": timeStamp.toMillisecondsAsInt64(),
-            "dateString": timeStamp.ISOStringFromDate(),
+            "date": timestamp.toMillisecondsAsInt64(),
+            "dateString": timestamp.ISOStringFromDate(),
             "type": "sgv",
             "sgv": glucoseFiltered,
             "direction": trend.toNightscout(),
             "noise": 1,
-            "sysTime": timeStamp.ISOStringFromDate()
+            "sysTime": timestamp.ISOStringFromDate()
         ]
 
         return nightscout

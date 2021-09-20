@@ -38,6 +38,7 @@ public extension UserDefaults {
         case freeAPSLatestReadings = "latestReadings"
         case glucoseValues = "libre-direct.settings.glucose-values"
         case lastGlucose = "libre-direct.settings.last-glucose"
+        case nightscoutUpload = "libre-direct.nightscout-upload-enabled"
         case nightscoutApiSecret = "libre-direct.settings.nightscout-api-secret"
         case nightscoutHost = "libre-direct.settings.nightscout-host"
         case glucoseUnit = "libre-direct.settings.glucose-unit"
@@ -111,6 +112,15 @@ public extension UserDefaults {
         }
         set {
             setObject(newValue, forKey: Keys.lastGlucose.rawValue)
+        }
+    }
+    
+    var nightscoutUpload: Bool {
+        get {
+            return bool(forKey: Keys.nightscoutUpload.rawValue)
+        }
+        set {
+            set(newValue, forKey: Keys.nightscoutUpload.rawValue)
         }
     }
 

@@ -15,10 +15,10 @@ public func sensorGlucoseBadgeMiddelware() -> Middleware<AppState, AppAction> {
 }
 
 func sensorGlucoseBadgeMiddelware(service: SensorGlucoseBadgeService) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
-            if state.glucoseUnit == .mgdL {
+            if store.state.glucoseUnit == .mgdL {
                 service.setGlucoseBadge(glucose: glucose.glucoseFiltered)
             } else {
                 service.setGlucoseBadge(glucose: 0)

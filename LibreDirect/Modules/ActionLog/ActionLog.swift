@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public func actionLogMiddleware() -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         Log.info("Triggered action: \(action)")
 
         return Empty().eraseToAnyPublisher()

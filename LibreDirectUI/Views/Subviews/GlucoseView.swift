@@ -64,7 +64,7 @@ struct GlucoseView: View {
                     .padding(.bottom, 5)
                 }
 
-                Text(glucose.timeStamp.localTime)
+                Text(glucose.timestamp.localTime)
             }
         }
     }
@@ -73,12 +73,12 @@ struct GlucoseView: View {
 struct GlucoseView_Previews: PreviewProvider {
     static var previews: some View {
         ForEach(ColorScheme.allCases, id: \.self) {
-            GlucoseView(glucose: SensorGlucose(id: 1, timeStamp: Date(), glucose: 60, minuteChange: 2), glucoseUnit: .mgdL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
-            GlucoseView(glucose: SensorGlucose(id: 1, timeStamp: Date(), glucose: 100, minuteChange: -2), glucoseUnit: .mgdL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
-            GlucoseView(glucose: SensorGlucose(id: 1, timeStamp: Date(), glucose: 190, minuteChange: 0), glucoseUnit: .mgdL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
-            GlucoseView(glucose: SensorGlucose(id: 1, timeStamp: Date(), glucose: 60, minuteChange: 2), glucoseUnit: .mmolL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
-            GlucoseView(glucose: SensorGlucose(id: 1, timeStamp: Date(), glucose: 100, minuteChange: -2), glucoseUnit: .mmolL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
-            GlucoseView(glucose: SensorGlucose(id: 1, timeStamp: Date(), glucose: 190, minuteChange: 0), glucoseUnit: .mmolL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
+            GlucoseView(glucose: SensorGlucose(id: 1, timestamp: Date(), glucose: 60, minuteChange: 2), glucoseUnit: .mgdL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
+            GlucoseView(glucose: SensorGlucose(id: 1, timestamp: Date(), glucose: 100, minuteChange: -2), glucoseUnit: .mgdL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
+            GlucoseView(glucose: SensorGlucose(id: 1, timestamp: Date(), glucose: 190, minuteChange: 0), glucoseUnit: .mgdL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
+            GlucoseView(glucose: SensorGlucose(id: 1, timestamp: Date(), glucose: 60, minuteChange: 2), glucoseUnit: .mmolL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
+            GlucoseView(glucose: SensorGlucose(id: 1, timestamp: Date(), glucose: 100, minuteChange: -2), glucoseUnit: .mmolL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
+            GlucoseView(glucose: SensorGlucose(id: 1, timestamp: Date(), glucose: 190, minuteChange: 0), glucoseUnit: .mmolL, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
             GlucoseView(glucose: nil, alarmLow: 70, alarmHigh: 180).preferredColorScheme($0)
         }
     }

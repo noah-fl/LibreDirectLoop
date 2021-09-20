@@ -36,7 +36,7 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
 
     case .setSensorReading(glucose: let glucose):
         if let lastGlucose = state.glucoseValues.last {
-            let minutesBetweenValues = glucose.timeStamp.timeIntervalSince(lastGlucose.timeStamp) / 60
+            let minutesBetweenValues = glucose.timestamp.timeIntervalSince(lastGlucose.timestamp) / 60
             //let allowedChange = Int(Double(lastGlucose.glucoseFiltered) * AppConfig.AllowedGlucoseChange * minutesBetweenValues)
             let allowedChange = Int(round(AppConfig.AllowedGlucoseChange * minutesBetweenValues))
             
@@ -71,15 +71,15 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
     case .setSensorError(errorMessage: let errorMessage, errorTimestamp: let errorTimestamp):
         state.connectionError = errorMessage
         state.connectionErrorTimeStamp = errorTimestamp
+        
+    case .setNightscoutUpload(enabled: let enabled):
+        state.nightscoutUpload = enabled
 
     case .setNightscoutHost(host: let host):
         state.nightscoutHost = host
 
     case .setNightscoutSecret(apiSecret: let apiSecret):
         state.nightscoutApiSecret = apiSecret
-
-    case .subscribeForUpdates:
-        break
 
     case .setAlarmLow(value: let value):
         state.alarmLow = value
@@ -90,6 +90,9 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
     case .setAlarmSnoozeUntil(value: let value):
         if let value = value {
             state.alarmSnoozeUntil = value
+            
+            // stop sounds
+            NotificationCenterService.shared.stopSound()
         } else {
             state.alarmSnoozeUntil = nil
         }
