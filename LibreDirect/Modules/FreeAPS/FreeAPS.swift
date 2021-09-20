@@ -13,7 +13,7 @@ public func freeAPSMiddleware() -> Middleware<AppState, AppAction> {
 }
 
 fileprivate func freeAPSMiddleware(service: FreeAPSService) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
             service.addGlucose(glucoseValues: [glucose])
@@ -48,7 +48,7 @@ fileprivate class FreeAPSService {
 
 fileprivate extension SensorGlucose {
     func toFreeAPS() -> [String: Any] {
-        let date = "/Date(" + Int64(floor(self.timeStamp.toMillisecondsAsDouble() / 1000) * 1000).description + ")/"
+        let date = "/Date(" + Int64(floor(self.timestamp.toMillisecondsAsDouble() / 1000) * 1000).description + ")/"
 
         let freeAPSGlucose: [String: Any] = [
             "Value": self.glucoseFiltered,

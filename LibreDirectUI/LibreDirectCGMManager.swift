@@ -38,8 +38,6 @@ public class LibreDirectCGMManager: CGMManager {
     required convenience public init?(rawState: CGMManager.RawStateValue) {
         self.init()
 
-        store?.dispatch(.subscribeForUpdates)
-
         if self.store?.state.isPaired ?? false {
             DispatchQueue.global(qos: .utility).async {
                 Thread.sleep(forTimeInterval: 3)

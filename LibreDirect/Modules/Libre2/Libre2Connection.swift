@@ -49,9 +49,10 @@ class Libre2ErrorUpdate: Libre2Update {
     }
 }
 
+typealias Libre2ConnectionHandler = (_ update: Libre2Update) -> Void
+
 protocol Libre2ConnectionProtocol {
-    func subscribeForUpdates() -> AnyPublisher<Libre2Update, Never>
-    func connectSensor(sensor: Sensor)
+    func connectSensor(sensor: Sensor, completionHandler: @escaping Libre2ConnectionHandler)
     func disconnectSensor()
 }
 
@@ -59,7 +60,7 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
     private let expectedBufferSize = 46
     private var rxBuffer = Data()
 
-    private var updateSubject = PassthroughSubject<Libre2Update, Never>()
+    private var completionHandler: Libre2ConnectionHandler?
 
     private var manager: CBCentralManager! = nil
     private let managerQueue: DispatchQueue = DispatchQueue(label: "libre-direct.ble-queue") // , qos: .unspecified
@@ -90,17 +91,12 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         manager = CBCentralManager(delegate: self, queue: managerQueue, options: [CBCentralManagerOptionShowPowerAlertKey: true])
     }
 
-    func subscribeForUpdates() -> AnyPublisher<Libre2Update, Never> {
-        dispatchPrecondition(condition: .notOnQueue(managerQueue))
-
-        return updateSubject.eraseToAnyPublisher()
-    }
-
-    func connectSensor(sensor: Sensor) {
+    func connectSensor(sensor: Sensor, completionHandler: @escaping Libre2ConnectionHandler) {
         dispatchPrecondition(condition: .notOnQueue(managerQueue))
 
         Log.info("ConnectSensor: \(sensor)")
-
+        
+        self.completionHandler = completionHandler
         self.sensor = sensor
 
         managerQueue.async {
@@ -219,15 +215,14 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
 
         Log.info("ConnectionState: \(connectionState.description)")
 
-        updateSubject.send(Libre2ConnectionUpdate(connectionState: connectionState))
+        self.completionHandler?(Libre2ConnectionUpdate(connectionState: connectionState))
     }
 
     private func sendUpdate(sensorAge: Int) {
         dispatchPrecondition(condition: .onQueue(managerQueue))
 
         Log.info("SensorAge: \(sensorAge.description)")
-
-        updateSubject.send(Libre2AgeUpdate(sensorAge: sensorAge))
+        self.completionHandler?(Libre2AgeUpdate(sensorAge: sensorAge))
     }
 
     private func sendUpdate(glucose: SensorGlucose) {
@@ -242,7 +237,7 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         Log.info("Glucose: \(glucose.description)")
         
         lastGlucose = glucose
-        updateSubject.send(Libre2GlucoseUpdate(lastGlucose: glucose))
+        self.completionHandler?(Libre2GlucoseUpdate(lastGlucose: glucose))
     }
 
     private func sendUpdate(error: Error?) {
@@ -253,7 +248,6 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         }
 
         Log.error("Error: \(error.localizedDescription)")
-
         sendUpdate(errorMessage: error.localizedDescription)
     }
 
@@ -261,16 +255,14 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         dispatchPrecondition(condition: .onQueue(managerQueue))
 
         Log.error("ErrorMessage: \(errorMessage)")
-
-        updateSubject.send(Libre2ErrorUpdate(errorMessage: errorMessage))
+        self.completionHandler?(Libre2ErrorUpdate(errorMessage: errorMessage))
     }
 
     private func sendUpdate(errorCode: Int) {
         dispatchPrecondition(condition: .onQueue(managerQueue))
 
         Log.error("ErrorCode: \(errorCode)")
-
-        updateSubject.send(Libre2ErrorUpdate(errorCode: errorCode))
+        self.completionHandler?(Libre2ErrorUpdate(errorCode: errorCode))
     }
 }
 
@@ -582,12 +574,12 @@ fileprivate func calculateDiffInMinutes(secondLast: Date, last: Date) -> Double 
 }
 
 fileprivate func calculateSlope(secondLast: SensorGlucose, last: SensorGlucose) -> Double {
-    if secondLast.timeStamp == last.timeStamp {
+    if secondLast.timestamp == last.timestamp {
         return 0.0
     }
 
     let glucoseDiff = Double(last.glucoseValue) - Double(secondLast.glucoseValue)
-    let minutesDiff = calculateDiffInMinutes(secondLast: secondLast.timeStamp, last: last.timeStamp)
+    let minutesDiff = calculateDiffInMinutes(secondLast: secondLast.timestamp, last: last.timestamp)
 
     return glucoseDiff / minutesDiff
 }

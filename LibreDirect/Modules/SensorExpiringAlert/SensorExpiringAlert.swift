@@ -14,10 +14,10 @@ public func sensorExpiringAlertMiddelware() -> Middleware<AppState, AppAction> {
 }
 
 func sensorExpiringAlertMiddelware(service: SensorExpiringAlertService) -> Middleware<AppState, AppAction> {
-    return { state, action, lastState in
+    return { store, action, lastState in
         switch action {
         case .setSensorAge(sensorAge: let sensorAge):
-            guard let sensor = state.sensor else {
+            guard let sensor = store.state.sensor else {
                 break
             }
 

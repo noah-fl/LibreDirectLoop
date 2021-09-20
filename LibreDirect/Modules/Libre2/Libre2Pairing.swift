@@ -9,27 +9,24 @@ import Foundation
 import Combine
 import CoreNFC
 
-struct Libre2PairingInfo {
-    private(set) var uuid: Data
-    private(set) var patchInfo: Data
-    private(set) var fram: Data
-    private(set) var streamingEnabled: Bool
-}
+typealias Libre2PairingHandler = (_ uuid: Data, _ patchInfo: Data, _ fram: Data, _ streamingEnabled: Bool) -> Void
 
 protocol Libre2PairingProtocol {
-    func pairSensor() -> AnyPublisher<Libre2PairingInfo, Never>
+    func pairSensor(completionHandler: @escaping Libre2PairingHandler)
 }
 
 class Libre2PairingService: NSObject, NFCTagReaderSessionDelegate, Libre2PairingProtocol {
     private var session: NFCTagReaderSession?
-    private var readingsSubject = PassthroughSubject<Libre2PairingInfo, Never>()
+    private var completionHandler: Libre2PairingHandler?
 
     private let nfcQueue = DispatchQueue(label: "libre-direct.nfc-queue")
     private let accessQueue = DispatchQueue(label: "libre-direct.nfc-access-queue")
 
     private let unlockCode: UInt32 = 42
 
-    func pairSensor() -> AnyPublisher<Libre2PairingInfo, Never> {
+    func pairSensor(completionHandler: @escaping Libre2PairingHandler) {
+        self.completionHandler = completionHandler
+    
         if NFCTagReaderSession.readingAvailable {
             accessQueue.async {
                 self.session = NFCTagReaderSession(pollingOption: .iso15693, delegate: self, queue: self.nfcQueue)
@@ -37,8 +34,6 @@ class Libre2PairingService: NSObject, NFCTagReaderSessionDelegate, Libre2Pairing
                 self.session?.begin()
             }
         }
-
-        return readingsSubject.eraseToAnyPublisher()
     }
 
     func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {
@@ -118,9 +113,9 @@ class Libre2PairingService: NSObject, NFCTagReaderSessionDelegate, Libre2Pairing
 
                                                     let decryptedFram = PreLibre2.decryptFRAM(sensorUID: sensorUID, patchInfo: patchInfo, fram: fram)
                                                     if let decryptedFram = decryptedFram {
-                                                        self.readingsSubject.send(Libre2PairingInfo(uuid: sensorUID, patchInfo: patchInfo, fram: decryptedFram, streamingEnabled: streamingEnabled))
+                                                        self.completionHandler?(sensorUID, patchInfo, decryptedFram, streamingEnabled)
                                                     } else {
-                                                        self.readingsSubject.send(Libre2PairingInfo(uuid: sensorUID, patchInfo: patchInfo, fram: fram, streamingEnabled: streamingEnabled))
+                                                        self.completionHandler?(sensorUID, patchInfo, fram, streamingEnabled)
                                                     }
 
                                                     //self.delegate?.streamingEnabled(successful: streamingEnabled)
