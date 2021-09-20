@@ -219,8 +219,8 @@ class Libre2 {
                 idValue = ((idValue - delay) / 15) * 15 - 15 * (i - 7)
             }
 
-            let timeStamp = Date().addingTimeInterval(Double(-60 * i))
-            let measurementFactory = SensorGlucose(id: idValue, timeStamp: timeStamp, rawSensorValue: rawSensorValue, rawTemperature: Double(rawTemperature), rawTemperatureAdjustment: Double(rawTemperatureAdjustment), calibration: calibration)
+            let timestamp = Date().addingTimeInterval(Double(-60 * i))
+            let measurementFactory = SensorGlucose(id: idValue, timestamp: timestamp, rawSensorValue: rawSensorValue, rawTemperature: Double(rawTemperature), rawTemperatureAdjustment: Double(rawTemperatureAdjustment), calibration: calibration)
 
             if i < 7 {
                 measurementTrend.append(measurementFactory)

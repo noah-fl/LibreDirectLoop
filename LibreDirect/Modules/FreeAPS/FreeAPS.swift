@@ -48,7 +48,7 @@ fileprivate class FreeAPSService {
 
 fileprivate extension SensorGlucose {
     func toFreeAPS() -> [String: Any] {
-        let date = "/Date(" + Int64(floor(self.timeStamp.toMillisecondsAsDouble() / 1000) * 1000).description + ")/"
+        let date = "/Date(" + Int64(floor(self.timestamp.toMillisecondsAsDouble() / 1000) * 1000).description + ")/"
 
         let freeAPSGlucose: [String: Any] = [
             "Value": self.glucoseFiltered,

@@ -568,12 +568,12 @@ fileprivate func calculateDiffInMinutes(secondLast: Date, last: Date) -> Double 
 }
 
 fileprivate func calculateSlope(secondLast: SensorGlucose, last: SensorGlucose) -> Double {
-    if secondLast.timeStamp == last.timeStamp {
+    if secondLast.timestamp == last.timestamp {
         return 0.0
     }
 
     let glucoseDiff = Double(last.glucoseValue) - Double(secondLast.glucoseValue)
-    let minutesDiff = calculateDiffInMinutes(secondLast: secondLast.timeStamp, last: last.timeStamp)
+    let minutesDiff = calculateDiffInMinutes(secondLast: secondLast.timestamp, last: last.timestamp)
 
     return glucoseDiff / minutesDiff
 }

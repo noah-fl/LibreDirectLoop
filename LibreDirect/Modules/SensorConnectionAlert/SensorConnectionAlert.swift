@@ -22,7 +22,8 @@ func sensorConnectionAlertMiddelware(service: SensorConnectionAlertService) -> M
             if lastState.connectionState == .connected && connectionState == .disconnected {
                 service.sendSensorConnectionLostNotification()
             } else if lastState.connectionState != .connected && connectionState == .connected {
-                service.sendSensorConnectionRestoredNotification()
+                //service.sendSensorConnectionRestoredNotification()
+                service.clearNotifications()
             }
 
         default:

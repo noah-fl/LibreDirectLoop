@@ -36,7 +36,7 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
 
     case .setSensorReading(glucose: let glucose):
         if let lastGlucose = state.glucoseValues.last {
-            let minutesBetweenValues = glucose.timeStamp.timeIntervalSince(lastGlucose.timeStamp) / 60
+            let minutesBetweenValues = glucose.timestamp.timeIntervalSince(lastGlucose.timestamp) / 60
             //let allowedChange = Int(Double(lastGlucose.glucoseFiltered) * AppConfig.AllowedGlucoseChange * minutesBetweenValues)
             let allowedChange = Int(round(AppConfig.AllowedGlucoseChange * minutesBetweenValues))
             

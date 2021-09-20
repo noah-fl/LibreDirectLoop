@@ -20,7 +20,7 @@ func nightscoutMiddleware(service: NightscoutService) -> Middleware<AppState, Ap
                 break
             }
             
-            let minutes = Calendar.current.component(.minute, from: glucose.timeStamp)
+            let minutes = Calendar.current.component(.minute, from: glucose.timestamp)
 
             guard minutes % 5 == 0 else {
                 break
@@ -90,13 +90,13 @@ fileprivate extension SensorGlucose {
         let nightscout: [String: Any] = [
             "_id": id,
             "device": "LibreDirect",
-            "date": timeStamp.toMillisecondsAsInt64(),
-            "dateString": timeStamp.ISOStringFromDate(),
+            "date": timestamp.toMillisecondsAsInt64(),
+            "dateString": timestamp.ISOStringFromDate(),
             "type": "sgv",
             "sgv": glucoseFiltered,
             "direction": trend.toNightscout(),
             "noise": 1,
-            "sysTime": timeStamp.ISOStringFromDate()
+            "sysTime": timestamp.ISOStringFromDate()
         ]
 
         return nightscout
