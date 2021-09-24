@@ -1,9 +1,8 @@
 //
-//  UICoordinator.swift
+//  LibreDirectViewLoader.swift
 //  LibreDirect
 //
-//  Created by Reimar Metzen on 23.08.21.
-//  Copyright © 2021 Mark Wilson. All rights reserved.
+//  Created by Reimar Metzen on 06.07.21.
 //
 
 import SwiftUI
@@ -48,7 +47,7 @@ class LibreDirectViewLoader: UINavigationController, CGMManagerOnboarding, Compl
         guard let cgmManager = cgmManager else {
             fatalError()
         }
-        
+
         guard let store = cgmManager.store else {
             fatalError()
         }
@@ -56,18 +55,18 @@ class LibreDirectViewLoader: UINavigationController, CGMManagerOnboarding, Compl
         let view = LibreDirectView(doneCompletionHandler: { () -> Void in
             self.completionDelegate?.completionNotifyingDidComplete(self)
         }, deleteCompletionHandler: { () -> Void in
-            cgmManager.store = nil
-            
-            UserDefaults.appGroup.glucoseValues = []
-            UserDefaults.appGroup.sensor = nil
-            
-            cgmManager.notifyDelegateOfDeletion {
-                DispatchQueue.main.async {
-                    self.completionDelegate?.completionNotifyingDidComplete(self)
+                cgmManager.store = nil
+
+                UserDefaults.appGroup.glucoseValues = []
+                UserDefaults.appGroup.sensor = nil
+
+                cgmManager.notifyDelegateOfDeletion {
+                    DispatchQueue.main.async {
+                        self.completionDelegate?.completionNotifyingDidComplete(self)
+                    }
                 }
-            }
-        }).environmentObject(store)
-        
+            }).environmentObject(store)
+
         return viewController(rootView: view)
     }
 

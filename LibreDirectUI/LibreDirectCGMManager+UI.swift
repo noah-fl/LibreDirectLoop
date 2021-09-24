@@ -1,8 +1,8 @@
 //
-//  G4CGMManager+UI.swift
-//  Loop
+//  LibreDirectCGMManager+UI.swift
+//  LibreDirect
 //
-//  Copyright © 2018 LoopKit Authors. All rights reserved.
+//  Created by Reimar Metzen on 06.07.21.
 //
 
 import SwiftUI

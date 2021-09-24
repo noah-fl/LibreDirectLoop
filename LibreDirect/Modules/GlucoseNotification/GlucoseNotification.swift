@@ -9,11 +9,11 @@ import Foundation
 import Combine
 import UserNotifications
 
-public func sensorGlucoseAlertMiddelware() -> Middleware<AppState, AppAction> {
-    return sensorGlucoseAlertMiddelware(service: SensorGlucoseAlertService())
+public func glucoseNotificationMiddelware() -> Middleware<AppState, AppAction> {
+    return glucoseNotificationMiddelware(service: glucoseNotificationService())
 }
 
-func sensorGlucoseAlertMiddelware(service: SensorGlucoseAlertService) -> Middleware<AppState, AppAction> {
+func glucoseNotificationMiddelware(service: glucoseNotificationService) -> Middleware<AppState, AppAction> {
     return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
@@ -29,7 +29,7 @@ func sensorGlucoseAlertMiddelware(service: SensorGlucoseAlertService) -> Middlew
                     Log.info("Glucose alert, low: \(glucose.glucoseFiltered) < \(store.state.alarmLow)")
 
                     service.sendLowGlucoseNotification(glucose: glucose.glucoseFiltered.asGlucose(unit: store.state.glucoseUnit))
-                    
+
                     DispatchQueue.main.async {
                         store.dispatch(.setAlarmSnoozeUntil(value: Date().addingTimeInterval(5 * 60).rounded(on: 1, .minute)))
                     }
@@ -39,7 +39,7 @@ func sensorGlucoseAlertMiddelware(service: SensorGlucoseAlertService) -> Middlew
                     Log.info("Glucose alert, high: \(glucose.glucoseFiltered) > \(store.state.alarmHigh)")
 
                     service.sendHighGlucoseNotification(glucose: glucose.glucoseFiltered.asGlucose(unit: store.state.glucoseUnit))
-                    
+
                     DispatchQueue.main.async {
                         store.dispatch(.setAlarmSnoozeUntil(value: Date().addingTimeInterval(5 * 60).rounded(on: 1, .minute)))
                     }
@@ -57,11 +57,11 @@ func sensorGlucoseAlertMiddelware(service: SensorGlucoseAlertService) -> Middlew
     }
 }
 
-class SensorGlucoseAlertService {
+class glucoseNotificationService {
     enum Identifier: String {
         case sensorGlucoseAlert = "libre-direct.notifications.sensor-glucose-alert"
     }
-    
+
     func clearNotifications() {
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [Identifier.sensorGlucoseAlert.rawValue])
     }
@@ -75,10 +75,11 @@ class SensorGlucoseAlertService {
             guard ensured else {
                 return
             }
-            
+
             let notification = UNMutableNotificationContent()
             notification.title = LocalizedString("Alert, low blood glucose", comment: "")
             notification.body = String(format: LocalizedString("Your blood sugar %1$@ is dangerously low. With sweetened drinks or dextrose, blood glucose levels can often return to normal.", comment: ""), glucose)
+            notification.badge = 2.0
             notification.sound = .none
 
             NotificationCenterService.shared.add(identifier: Identifier.sensorGlucoseAlert.rawValue, content: notification)

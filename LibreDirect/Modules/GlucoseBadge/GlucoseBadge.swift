@@ -10,11 +10,11 @@ import Combine
 import UserNotifications
 import UIKit
 
-public func sensorGlucoseBadgeMiddelware() -> Middleware<AppState, AppAction> {
-    return sensorGlucoseBadgeMiddelware(service: SensorGlucoseBadgeService())
+public func glucoseBadgeMiddelware() -> Middleware<AppState, AppAction> {
+    return glucoseBadgeMiddelware(service: glucoseBadgeService())
 }
 
-func sensorGlucoseBadgeMiddelware(service: SensorGlucoseBadgeService) -> Middleware<AppState, AppAction> {
+func glucoseBadgeMiddelware(service: glucoseBadgeService) -> Middleware<AppState, AppAction> {
     return { store, action, lastState in
         switch action {
         case .setSensorReading(glucose: let glucose):
@@ -33,7 +33,7 @@ func sensorGlucoseBadgeMiddelware(service: SensorGlucoseBadgeService) -> Middlew
     }
 }
 
-class SensorGlucoseBadgeService {
+class glucoseBadgeService {
     func setGlucoseBadge(glucose: Int) {
         dispatchPrecondition(condition: .onQueue(DispatchQueue.main))
 

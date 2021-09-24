@@ -16,18 +16,18 @@ class NotificationCenterService {
 
     private init() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .allowAirPlay])
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch let error {
             Log.info("NotificationCenter, error: \(error.localizedDescription)")
         }
     }
-    
+
     func stopSound() {
         guard let player = player else {
             return
         }
-        
+
         player.pause()
     }
 
@@ -80,7 +80,7 @@ class NotificationCenterService {
 
         let player = AVPlayer.init(url: soundURL)
         player.play()
-        
+
         self.player = player
     }
 }

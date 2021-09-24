@@ -65,10 +65,10 @@
 		E22B6BAB26D6C65D00737507 /* DefaultAppReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BA726D6C65D00737507 /* DefaultAppReducer.swift */; };
 		E22B6BAC26D6C65D00737507 /* PreviewAppReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BA826D6C65D00737507 /* PreviewAppReducer.swift */; };
 		E22B6BAD26D6C65D00737507 /* DefaultAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BA926D6C65D00737507 /* DefaultAppState.swift */; };
-		E22B6BAF26D6C66900737507 /* SensorGlucoseBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BAE26D6C66900737507 /* SensorGlucoseBadge.swift */; };
-		E22B6BB126D6C67300737507 /* SensorGlucoseAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB026D6C67300737507 /* SensorGlucoseAlert.swift */; };
-		E22B6BB326D6C67A00737507 /* SensorExpiringAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB226D6C67A00737507 /* SensorExpiringAlert.swift */; };
-		E22B6BB526D6C68300737507 /* SensorConnectionAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB426D6C68300737507 /* SensorConnectionAlert.swift */; };
+		E22B6BAF26D6C66900737507 /* GlucoseBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BAE26D6C66900737507 /* GlucoseBadge.swift */; };
+		E22B6BB126D6C67300737507 /* GlucoseNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB026D6C67300737507 /* GlucoseNotification.swift */; };
+		E22B6BB326D6C67A00737507 /* ExpiringNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB226D6C67A00737507 /* ExpiringNotification.swift */; };
+		E22B6BB526D6C68300737507 /* ConnectionNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB426D6C68300737507 /* ConnectionNotification.swift */; };
 		E22B6BB726D6C68B00737507 /* NotificationCenterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB626D6C68B00737507 /* NotificationCenterService.swift */; };
 		E22B6BB926D6C69300737507 /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BB826D6C69300737507 /* Nightscout.swift */; };
 		E22B6BBC26D6C69C00737507 /* Libre2Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22B6BBA26D6C69C00737507 /* Libre2Connection.swift */; };
@@ -162,10 +162,10 @@
 		E22B6BA726D6C65D00737507 /* DefaultAppReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultAppReducer.swift; sourceTree = "<group>"; };
 		E22B6BA826D6C65D00737507 /* PreviewAppReducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewAppReducer.swift; sourceTree = "<group>"; };
 		E22B6BA926D6C65D00737507 /* DefaultAppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultAppState.swift; sourceTree = "<group>"; };
-		E22B6BAE26D6C66900737507 /* SensorGlucoseBadge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorGlucoseBadge.swift; sourceTree = "<group>"; };
-		E22B6BB026D6C67300737507 /* SensorGlucoseAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorGlucoseAlert.swift; sourceTree = "<group>"; };
-		E22B6BB226D6C67A00737507 /* SensorExpiringAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorExpiringAlert.swift; sourceTree = "<group>"; };
-		E22B6BB426D6C68300737507 /* SensorConnectionAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorConnectionAlert.swift; sourceTree = "<group>"; };
+		E22B6BAE26D6C66900737507 /* GlucoseBadge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlucoseBadge.swift; sourceTree = "<group>"; };
+		E22B6BB026D6C67300737507 /* GlucoseNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlucoseNotification.swift; sourceTree = "<group>"; };
+		E22B6BB226D6C67A00737507 /* ExpiringNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpiringNotification.swift; sourceTree = "<group>"; };
+		E22B6BB426D6C68300737507 /* ConnectionNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionNotification.swift; sourceTree = "<group>"; };
 		E22B6BB626D6C68B00737507 /* NotificationCenterService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationCenterService.swift; sourceTree = "<group>"; };
 		E22B6BB826D6C69300737507 /* Nightscout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
 		E22B6BBA26D6C69C00737507 /* Libre2Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Libre2Connection.swift; sourceTree = "<group>"; };
@@ -381,10 +381,10 @@
 				E22B6B9E26D6C61400737507 /* Libre2 */,
 				E2C8137726DFD2A9002009EB /* Loop */,
 				E22B6B9F26D6C61B00737507 /* Nightscout */,
-				E22B6BA126D6C62A00737507 /* SensorConnectionAlert */,
-				E22B6BA226D6C63200737507 /* SensorExpiringAlert */,
-				E22B6BA326D6C63A00737507 /* SensorGlucoseAlert */,
-				E22B6BA426D6C64A00737507 /* SensorGlucoseBadge */,
+				E22B6BA126D6C62A00737507 /* ConnectionNotification */,
+				E22B6BA226D6C63200737507 /* ExpiringNotification */,
+				E22B6BA326D6C63A00737507 /* GlucoseNotification */,
+				E22B6BA426D6C64A00737507 /* GlucoseBadge */,
 				E22B6BA726D6C65D00737507 /* DefaultAppReducer.swift */,
 				E22B6BA926D6C65D00737507 /* DefaultAppState.swift */,
 				E22B6BB626D6C68B00737507 /* NotificationCenterService.swift */,
@@ -429,36 +429,36 @@
 			path = Nightscout;
 			sourceTree = "<group>";
 		};
-		E22B6BA126D6C62A00737507 /* SensorConnectionAlert */ = {
+		E22B6BA126D6C62A00737507 /* ConnectionNotification */ = {
 			isa = PBXGroup;
 			children = (
-				E22B6BB426D6C68300737507 /* SensorConnectionAlert.swift */,
+				E22B6BB426D6C68300737507 /* ConnectionNotification.swift */,
 			);
-			path = SensorConnectionAlert;
+			path = ConnectionNotification;
 			sourceTree = "<group>";
 		};
-		E22B6BA226D6C63200737507 /* SensorExpiringAlert */ = {
+		E22B6BA226D6C63200737507 /* ExpiringNotification */ = {
 			isa = PBXGroup;
 			children = (
-				E22B6BB226D6C67A00737507 /* SensorExpiringAlert.swift */,
+				E22B6BB226D6C67A00737507 /* ExpiringNotification.swift */,
 			);
-			path = SensorExpiringAlert;
+			path = ExpiringNotification;
 			sourceTree = "<group>";
 		};
-		E22B6BA326D6C63A00737507 /* SensorGlucoseAlert */ = {
+		E22B6BA326D6C63A00737507 /* GlucoseNotification */ = {
 			isa = PBXGroup;
 			children = (
-				E22B6BB026D6C67300737507 /* SensorGlucoseAlert.swift */,
+				E22B6BB026D6C67300737507 /* GlucoseNotification.swift */,
 			);
-			path = SensorGlucoseAlert;
+			path = GlucoseNotification;
 			sourceTree = "<group>";
 		};
-		E22B6BA426D6C64A00737507 /* SensorGlucoseBadge */ = {
+		E22B6BA426D6C64A00737507 /* GlucoseBadge */ = {
 			isa = PBXGroup;
 			children = (
-				E22B6BAE26D6C66900737507 /* SensorGlucoseBadge.swift */,
+				E22B6BAE26D6C66900737507 /* GlucoseBadge.swift */,
 			);
-			path = SensorGlucoseBadge;
+			path = GlucoseBadge;
 			sourceTree = "<group>";
 		};
 		E22B6BCB26D6C7D900737507 /* LibreDirectUI */ = {
@@ -679,7 +679,7 @@
 				E22B6BC926D6C7BE00737507 /* AppState.swift in Sources */,
 				E2B3E09B26D8B6F700F17EE0 /* SensorGlucose+Loop.swift in Sources */,
 				E22B6B9B26D6C5FD00737507 /* Libre2Utility.swift in Sources */,
-				E22B6BB326D6C67A00737507 /* SensorExpiringAlert.swift in Sources */,
+				E22B6BB326D6C67A00737507 /* ExpiringNotification.swift in Sources */,
 				E22B6B8F26D6C5DF00737507 /* UserDefaults.swift in Sources */,
 				E22B6B9926D6C5F000737507 /* StreamReader.swift in Sources */,
 				E22B6B9126D6C5DF00737507 /* Date.swift in Sources */,
@@ -697,14 +697,14 @@
 				E22B6BC126D6C6AE00737507 /* ActionLog.swift in Sources */,
 				E22B6BCA26D6C7BE00737507 /* AppAction.swift in Sources */,
 				E20761A626D3C0EF00023484 /* GlucoseChartView.swift in Sources */,
-				E22B6BAF26D6C66900737507 /* SensorGlucoseBadge.swift in Sources */,
+				E22B6BAF26D6C66900737507 /* GlucoseBadge.swift in Sources */,
 				E22B6BB926D6C69300737507 /* Nightscout.swift in Sources */,
 				E22B6B9526D6C5DF00737507 /* View.swift in Sources */,
 				E20761A926D3C0EF00023484 /* LifetimeView.swift in Sources */,
 				E22B6B7F26D6C5CA00737507 /* SensorFamily.swift in Sources */,
 				E22B6B9326D6C5DF00737507 /* String.swift in Sources */,
 				E22B6B8026D6C5CA00737507 /* SensorCalibration.swift in Sources */,
-				E22B6BB126D6C67300737507 /* SensorGlucoseAlert.swift in Sources */,
+				E22B6BB126D6C67300737507 /* GlucoseNotification.swift in Sources */,
 				E22B6BB726D6C68B00737507 /* NotificationCenterService.swift in Sources */,
 				E2C8137926DFD2CE002009EB /* Loop.swift in Sources */,
 				E22B6BC726D6C7BE00737507 /* AppStore.swift in Sources */,
@@ -716,7 +716,7 @@
 				E20761A526D3C0EF00023484 /* AlarmSettingsView.swift in Sources */,
 				E22B6B8426D6C5CA00737507 /* Sensor.swift in Sources */,
 				E22B6B8E26D6C5DF00737507 /* LocalizedString.swift in Sources */,
-				E22B6BB526D6C68300737507 /* SensorConnectionAlert.swift in Sources */,
+				E22B6BB526D6C68300737507 /* ConnectionNotification.swift in Sources */,
 				E20761AB26D3C0EF00023484 /* ActionsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

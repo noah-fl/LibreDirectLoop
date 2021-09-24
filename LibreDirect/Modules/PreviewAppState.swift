@@ -19,7 +19,7 @@ fileprivate func createPreviewSensor() -> Sensor {
     if let sensor = try? decoder.decode(Sensor.self, from: savedSensor) {
         return sensor
     }
-    
+
     return Sensor(uuid: savedUuid, patchInfo: savedPatchInfo, fram: savedFram)
 }
 
@@ -44,18 +44,19 @@ public struct PreviewAppState: AppState {
         SensorGlucose(timestamp: Date().addingTimeInterval(-1 * 60), glucose: 110),
         SensorGlucose(timestamp: Date(), glucose: 100)
     ]
-    
+
+    public var missedReadings: Int = 0
     public var nightscoutUpload: Bool = false
     public var nightscoutApiSecret: String = ""
     public var nightscoutHost: String = ""
     public var sensor: Sensor? = createPreviewSensor()
-    
+
     public var lastGlucose: SensorGlucose? {
         get {
             return glucoseValues.last
         }
     }
-    
+
     public init() {
     }
 }

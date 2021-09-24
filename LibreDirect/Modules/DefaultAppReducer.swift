@@ -39,16 +39,17 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
             let minutesBetweenValues = glucose.timestamp.timeIntervalSince(lastGlucose.timestamp) / 60
             //let allowedChange = Int(Double(lastGlucose.glucoseFiltered) * AppConfig.AllowedGlucoseChange * minutesBetweenValues)
             let allowedChange = Int(round(AppConfig.AllowedGlucoseChange * minutesBetweenValues))
-            
+
             let lowerLimit = max(lastGlucose.glucoseFiltered - allowedChange, AppConfig.MinReadableGlucose)
             let upperLimit = min(lastGlucose.glucoseFiltered + allowedChange, AppConfig.MaxReadableGlucose)
-            
+
             glucose.lowerLimits.append(lowerLimit)
             glucose.upperLimits.append(upperLimit)
-            
+
             Log.info("Reading update current: \(glucose.glucoseFiltered), lowerLimit: \(lowerLimit), upperLimit: \(upperLimit)")
         }
-        
+
+        state.missedReadings = 0
         state.glucoseValues.append(glucose)
 
         if let numberOfGlucoseValues = AppConfig.NumberOfGlucoseValues {
@@ -68,10 +69,13 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
 
         state.sensor!.age = sensorAge
 
+    case .setSensorMissedReadings:
+        state.missedReadings += 1
+
     case .setSensorError(errorMessage: let errorMessage, errorTimestamp: let errorTimestamp):
         state.connectionError = errorMessage
         state.connectionErrorTimeStamp = errorTimestamp
-        
+
     case .setNightscoutUpload(enabled: let enabled):
         state.nightscoutUpload = enabled
 
@@ -90,16 +94,16 @@ public func defaultAppReducer(state: inout AppState, action: AppAction) -> Void 
     case .setAlarmSnoozeUntil(value: let value):
         if let value = value {
             state.alarmSnoozeUntil = value
-            
+
             // stop sounds
             NotificationCenterService.shared.stopSound()
         } else {
             state.alarmSnoozeUntil = nil
         }
-        
+
     case .setGlucoseUnit(value: let value):
         state.glucoseUnit = value
-        
+
     }
 
     if let alarmSnoozeUntil = state.alarmSnoozeUntil, Date() > alarmSnoozeUntil {

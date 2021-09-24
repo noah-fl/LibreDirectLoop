@@ -31,26 +31,26 @@ public extension UserDefaults {
     }
 }
 
-public extension UserDefaults {
-    enum Keys: String {
-        case alarmHigh = "libre-direct.settings.alarm-high"
-        case alarmLow = "libre-direct.settings.alarm-low"
-        case freeAPSLatestReadings = "latestReadings"
-        case glucoseValues = "libre-direct.settings.glucose-values"
-        case lastGlucose = "libre-direct.settings.last-glucose"
-        case nightscoutUpload = "libre-direct.nightscout-upload-enabled"
-        case nightscoutApiSecret = "libre-direct.settings.nightscout-api-secret"
-        case nightscoutHost = "libre-direct.settings.nightscout-host"
-        case glucoseUnit = "libre-direct.settings.glucose-unit"
-        case sensor = "libre-direct.settings.sensor"
-    }
+fileprivate enum Keys: String {
+    case alarmHigh = "libre-direct.settings.alarm-high"
+    case alarmLow = "libre-direct.settings.alarm-low"
+    case freeAPSLatestReadings = "latestReadings"
+    case glucoseValues = "libre-direct.settings.glucose-values"
+    case lastGlucose = "libre-direct.settings.last-glucose"
+    case nightscoutUpload = "libre-direct.nightscout-upload-enabled"
+    case nightscoutApiSecret = "libre-direct.settings.nightscout-api-secret"
+    case nightscoutHost = "libre-direct.settings.nightscout-host"
+    case glucoseUnit = "libre-direct.settings.glucose-unit"
+    case sensor = "libre-direct.settings.sensor"
+}
 
+public extension UserDefaults {
     var alarmHigh: Int? {
         get {
             if UserDefaults.standard.object(forKey: Keys.alarmHigh.rawValue) != nil {
                 return integer(forKey: Keys.alarmHigh.rawValue)
             }
-            
+
             return nil
         }
         set {
@@ -63,7 +63,7 @@ public extension UserDefaults {
             if UserDefaults.standard.object(forKey: Keys.alarmLow.rawValue) != nil {
                 return integer(forKey: Keys.alarmLow.rawValue)
             }
-            
+
             return nil
         }
         set {
@@ -83,13 +83,13 @@ public extension UserDefaults {
             }
         }
     }
-    
+
     var glucoseUnit: GlucoseUnit {
         get {
             if let glucoseUnitValue = object(forKey: Keys.glucoseUnit.rawValue) as? String {
                 return GlucoseUnit(rawValue: glucoseUnitValue)!
             }
-            
+
             return .mgdL
         }
         set {
@@ -114,7 +114,7 @@ public extension UserDefaults {
             setObject(newValue, forKey: Keys.lastGlucose.rawValue)
         }
     }
-    
+
     var nightscoutUpload: Bool {
         get {
             return bool(forKey: Keys.nightscoutUpload.rawValue)

@@ -197,14 +197,17 @@ class Libre2 {
         let delay = 2
         let ints = [0, 2, 4, 6, 7, 12, 15]
         var historyCount = 0
-        for i in 0 ..< 10 {           
+        for i in 0 ..< 10 {
             let rawSensorValue = Double(readBits(data, i * 4, 0, 0xe))
-            if rawSensorValue == 0 {
-                continue
-            }
-
             let rawTemperature = readBits(data, i * 4, 0xe, 0xc) << 2
             var rawTemperatureAdjustment = readBits(data, i * 4, 0x1a, 0x5) << 2
+
+            if rawSensorValue == 0 {
+                let error = GlucoseError(rawValue: (rawTemperature >> 2))
+                Log.error("Glucose Error: \(error.rawValue), \(error.description))")
+
+                continue
+            }
 
             let negativeAdjustment = readBits(data, i * 4, 0x1f, 0x1)
             if negativeAdjustment != 0 {
@@ -277,4 +280,42 @@ fileprivate func crc16(_ data: Data) -> UInt16 {
         crc >>= 1
     }
     return reverseCrc.byteSwapped
+}
+
+struct GlucoseError: OptionSet {
+    let rawValue: Int
+
+    var description: String {
+        var outputs: [String] = []
+
+        if self.contains(.SD14_FIFO_OVERFLOW) { outputs.append("SD14_FIFO_OVERFLOW") }
+        if self.contains(.FILTER_DELTA) { outputs.append("FILTER_DELTA") }
+        if self.contains(.WORK_VOLTAGE) { outputs.append("WORK_VOLTAGE") }
+        if self.contains(.PEAK_DELTA_EXCEEDED) { outputs.append("PEAK_DELTA_EXCEEDED") }
+        if self.contains(.AVG_DELTA_EXCEEDED) { outputs.append("AVG_DELTA_EXCEEDED") }
+        if self.contains(.RF) { outputs.append("RF") }
+        if self.contains(.REF_R) { outputs.append("REF_R") }
+        if self.contains(.SIGNAL_SATURATED) { outputs.append("SIGNAL_SATURATED") }
+        if self.contains(.SENSOR_SIGNAL_LOW) { outputs.append("SENSOR_SIGNAL_LOW") }
+        if self.contains(.THERMISTOR_OUT_OF_RANGE) { outputs.append("THERMISTOR_OUT_OF_RANGE") }
+        if self.contains(.TEMP_HIGH) { outputs.append("TEMP_HIGH") }
+        if self.contains(.TEMP_LOW) { outputs.append("TEMP_LOW") }
+        if self.contains(.INVALID_DATA) { outputs.append("INVALID_DATA") }
+
+        return outputs.joined(separator: ", ")
+    }
+
+    static let SD14_FIFO_OVERFLOW = GlucoseError(rawValue: 1 << 0)
+    static let FILTER_DELTA = GlucoseError(rawValue: 1 << 1)
+    static let WORK_VOLTAGE = GlucoseError(rawValue: 1 << 2)
+    static let PEAK_DELTA_EXCEEDED = GlucoseError(rawValue: 1 << 3)
+    static let AVG_DELTA_EXCEEDED = GlucoseError(rawValue: 1 << 4)
+    static let RF = GlucoseError(rawValue: 1 << 5)
+    static let REF_R = GlucoseError(rawValue: 1 << 6)
+    static let SIGNAL_SATURATED = GlucoseError(rawValue: 1 << 7)
+    static let SENSOR_SIGNAL_LOW = GlucoseError(rawValue: 1 << 8)
+    static let THERMISTOR_OUT_OF_RANGE = GlucoseError(rawValue: 1 << 9)
+    static let TEMP_HIGH = GlucoseError(rawValue: 1 << 10)
+    static let TEMP_LOW = GlucoseError(rawValue: 1 << 11)
+    static let INVALID_DATA = GlucoseError(rawValue: 1 << 12)
 }

@@ -12,7 +12,7 @@ fileprivate extension Bool {
         if self == GlucoseUnit.mgdL.asBool {
             return GlucoseUnit.mgdL
         }
-        
+
         return GlucoseUnit.mmolL
     }
 }
@@ -25,12 +25,12 @@ fileprivate extension GlucoseUnit {
 
 struct GlucoseSettingsView: View {
     @EnvironmentObject var store: AppStore
-    
+
     var body: some View {
         GroupBox(label: Text("Glucose Settings").padding(.bottom).foregroundColor(.accentColor)) {
-            ToggleView(key: LocalizedString("Glucose Unit", comment: ""), value: store.state.glucoseUnit.asBool, trueValue: true.asGlucoseUnit.description, falseValue: false.asGlucoseUnit.description, completionHandler: { (value) -> Void in
+            ToggleView(key: LocalizedString("Glucose Unit", comment: ""), value: store.state.glucoseUnit.asBool, trueValue: true.asGlucoseUnit.description, falseValue: false.asGlucoseUnit.description) { (value) -> Void in
                 store.dispatch(.setGlucoseUnit(value: value.asGlucoseUnit))
-            })
+            }
         }
     }
 }

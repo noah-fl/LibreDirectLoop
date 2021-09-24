@@ -189,3 +189,12 @@
 
 /* (No Comment) */
 "Nightscout Host Enabled" = "Enabled";
+
+/* (No Comment) */
+"Sensor Missed Readings" = "Missed";
+
+/* (No Comment) */
+"Warning, sensor missed %1$@ readings" = "Warning, sensor missed %1$@ readings";
+
+/* (No Comment) */
+"The connection to the sensor seems to exist, but no values are received. Faulty sensor data may be the cause." = "The connection to the sensor seems to exist, but no values are received. Faulty sensor data may be the cause.";

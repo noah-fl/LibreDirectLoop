@@ -1,8 +1,8 @@
 //
-//  G4CGMManager.swift
-//  Loop
+//  LibreDirectCGMManager.swift
+//  LibreDirect
 //
-//  Copyright © 2018 LoopKit Authors. All rights reserved.
+//  Created by Reimar Metzen on 06.07.21.
 //
 
 import LoopKit
@@ -13,12 +13,13 @@ import Combine
 public class LibreDirectCGMManager: CGMManager {
     init() {
         store = AppStore(initialState: DefaultAppState(), reducer: defaultAppReducer, middlewares: [
+                actionLogMiddleware(),
                 libre2Middelware(),
-                sensorExpiringAlertMiddelware(),
-                sensorGlucoseAlertMiddelware(),
-                sensorGlucoseBadgeMiddelware(),
-                sensorConnectionAlertMiddelware(),
-                loopMiddleware(updateHandler: { (value) -> Void in
+                expiringNotificationMiddelware(),
+                glucoseNotificationMiddelware(),
+                glucoseBadgeMiddelware(),
+                connectionNotificationMiddelware(),
+                loopMiddleware() { (value) -> Void in
                     guard self.latestReading == nil || self.latestReading?.id != value.id else {
                         return
                     }
@@ -30,8 +31,7 @@ public class LibreDirectCGMManager: CGMManager {
                     self.delegateQueue.async {
                         self.cgmManagerDelegate?.cgmManager(self, hasNew: loopGlucoseResult)
                     }
-                }),
-                actionLogMiddleware()
+                }
             ])
     }
 
@@ -87,7 +87,7 @@ public class LibreDirectCGMManager: CGMManager {
     public var shouldSyncToRemoteService: Bool {
         return store?.state.nightscoutUpload ?? false
     }
-    
+
     public var glucoseDisplay: GlucoseDisplayable? {
         return latestReading
     }
@@ -109,7 +109,7 @@ public class LibreDirectCGMManager: CGMManager {
             firmwareVersion: nil,
             softwareVersion: String(LibreDirectVersionNumber),
             localIdentifier: nil,
-            udiDeviceIdentifier: "40386270000048"
+            udiDeviceIdentifier: ""
         )
     }
 

@@ -29,7 +29,10 @@ class Libre2ConnectionUpdate: Libre2Update {
 }
 
 class Libre2GlucoseUpdate: Libre2Update {
-    private(set) var glucose: SensorGlucose
+    private(set) var glucose: SensorGlucose?
+
+    override init() {
+    }
 
     init(lastGlucose: SensorGlucose) {
         self.glucose = lastGlucose
@@ -68,7 +71,6 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
     private var abbottServiceUuid: [CBUUID] = [CBUUID(string: "FDE3")]
     private var bleLoginUuid: CBUUID = CBUUID(string: "F001")
     private var compositeRawDataUuid: CBUUID = CBUUID(string: "F002")
-    private var libre3DataUuid = CBUUID(string: "089810CC-EF89-11E9-81B4-2A2AE2DBCCE4")
 
     private var readCharacteristic: CBCharacteristic?
     private var writeCharacteristic: CBCharacteristic?
@@ -76,12 +78,13 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
     private var stayConnected = false
     private var sensor: Sensor? = nil
     private var lastGlucose: SensorGlucose? = nil
-    private var kalmanInstance: KalmanFilter = KalmanFilter()
 
     private var peripheral: CBPeripheral? {
         didSet {
             oldValue?.delegate = nil
             peripheral?.delegate = self
+
+            UserDefaults.standard.libre2PeripheralUuid = peripheral?.identifier.uuidString
         }
     }
 
@@ -91,16 +94,20 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         manager = CBCentralManager(delegate: self, queue: managerQueue, options: [CBCentralManagerOptionShowPowerAlertKey: true])
     }
 
+    deinit {
+        disconnect()
+    }
+
     func connectSensor(sensor: Sensor, completionHandler: @escaping Libre2ConnectionHandler) {
         dispatchPrecondition(condition: .notOnQueue(managerQueue))
 
         Log.info("ConnectSensor: \(sensor)")
-        
+
         self.completionHandler = completionHandler
         self.sensor = sensor
 
         managerQueue.async {
-            self.scan()
+            self.find()
         }
     }
 
@@ -117,10 +124,10 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         }
     }
 
-    private func scan() {
+    private func find() {
         dispatchPrecondition(condition: .onQueue(managerQueue))
 
-        Log.info("Scan")
+        Log.info("find")
 
         guard sensor != nil else {
             return
@@ -132,8 +139,22 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
             return
         }
 
-        if manager.isScanning {
-            manager.stopScan()
+        if let peripheralUuidString = UserDefaults.standard.libre2PeripheralUuid,
+            let peripheralUuid = UUID(uuidString: peripheralUuidString),
+            let retrievedPeripheral = manager.retrievePeripherals(withIdentifiers: [peripheralUuid]).first {
+            connect(retrievedPeripheral)
+        } else {
+            scan()
+        }
+    }
+
+    private func scan() {
+        dispatchPrecondition(condition: .onQueue(managerQueue))
+
+        Log.info("scan")
+
+        guard sensor != nil else {
+            return
         }
 
         sendUpdate(connectionState: .scanning)
@@ -153,14 +174,17 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
 
         if let peripheral = peripheral {
             manager.cancelPeripheralConnection(peripheral)
-        } else {
-            sendUpdate(connectionState: .disconnected)
+            self.peripheral = nil
         }
+
+        sendUpdate(connectionState: .disconnected)
     }
-    
+
     private func connect() {
         if let peripheral = self.peripheral {
             connect(peripheral)
+        } else {
+            find()
         }
     }
 
@@ -169,13 +193,11 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
 
         Log.info("Connect: \(peripheral)")
 
-        if manager.isScanning {
-            manager.stopScan()
+        if self.peripheral != peripheral {
+            self.peripheral = peripheral
         }
 
-        self.peripheral = peripheral
         manager.connect(peripheral, options: nil)
-        
         sendUpdate(connectionState: .connecting)
     }
 
@@ -188,9 +210,9 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
             return nil
         }
 
-        sensor!.unlockCount = sensor!.unlockCount + 1
+        UserDefaults.standard.libre2UnlockCount = UserDefaults.standard.libre2UnlockCount + 1
 
-        let unlockPayload = Libre2.streamingUnlockPayload(sensorUID: sensor!.uuid, info: sensor!.patchInfo, enableTime: 42, unlockCount: UInt16(sensor!.unlockCount))
+        let unlockPayload = Libre2.streamingUnlockPayload(sensorUID: sensor!.uuid, info: sensor!.patchInfo, enableTime: 42, unlockCount: UInt16(UserDefaults.standard.libre2UnlockCount))
         return Data(unlockPayload)
     }
 
@@ -214,7 +236,6 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         dispatchPrecondition(condition: .onQueue(managerQueue))
 
         Log.info("ConnectionState: \(connectionState.description)")
-
         self.completionHandler?(Libre2ConnectionUpdate(connectionState: connectionState))
     }
 
@@ -225,17 +246,24 @@ class Libre2ConnectionService: NSObject, Libre2ConnectionProtocol {
         self.completionHandler?(Libre2AgeUpdate(sensorAge: sensorAge))
     }
 
+    private func sendEmptyGlucoseUpdate() {
+        dispatchPrecondition(condition: .onQueue(managerQueue))
+
+        Log.info("Empty glucose update!")
+
+        lastGlucose = nil
+        self.completionHandler?(Libre2GlucoseUpdate())
+    }
+
     private func sendUpdate(glucose: SensorGlucose) {
         dispatchPrecondition(condition: .onQueue(managerQueue))
 
-        glucose.smoothedGlucoseValue = Int(round(kalmanInstance.filter(measurement: Double(glucose.glucoseValue))))
-        
         if let lastGlucose = lastGlucose {
             glucose.minuteChange = calculateSlope(secondLast: lastGlucose, last: glucose)
         }
 
         Log.info("Glucose: \(glucose.description)")
-        
+
         lastGlucose = glucose
         self.completionHandler?(Libre2GlucoseUpdate(lastGlucose: glucose))
     }
@@ -279,9 +307,11 @@ extension Libre2ConnectionService: CBCentralManagerDelegate {
         case .poweredOn:
             sendUpdate(connectionState: .disconnected)
 
-            if stayConnected {
-                scan()
+            guard stayConnected else {
+                break
             }
+
+            find()
         default:
             sendUpdate(connectionState: .unknown)
 
@@ -306,6 +336,7 @@ extension Libre2ConnectionService: CBCentralManagerDelegate {
 
             let result = foundUUID == sensor.uuid && peripheral.name?.lowercased().starts(with: "abbott") ?? false
             if result {
+                manager.stopScan()
                 connect(peripheral)
             }
         }
@@ -315,6 +346,7 @@ extension Libre2ConnectionService: CBCentralManagerDelegate {
         dispatchPrecondition(condition: .onQueue(managerQueue))
 
         Log.info("Peripheral: \(peripheral)")
+        sendUpdate(connectionState: .connected)
 
         peripheral.discoverServices(abbottServiceUuid)
     }
@@ -359,7 +391,7 @@ extension Libre2ConnectionService: CBPeripheralDelegate {
             for service in services {
                 Log.info("Service Uuid: \(service.uuid)")
 
-                peripheral.discoverCharacteristics(nil, for: service)
+                peripheral.discoverCharacteristics([compositeRawDataUuid, bleLoginUuid], for: service)
             }
         }
     }
@@ -394,7 +426,6 @@ extension Libre2ConnectionService: CBPeripheralDelegate {
 
         Log.info("Peripheral: \(peripheral)")
         sendUpdate(error: error)
-        sendUpdate(connectionState: .connected)
     }
 
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
@@ -427,11 +458,13 @@ extension Libre2ConnectionService: CBPeripheralDelegate {
                     let sensorUpdate = Libre2.parseBLEData(decryptedBLE, calibration: sensor.calibration)
 
                     sendUpdate(sensorAge: sensorUpdate.age)
-                    
+
                     if let newestGlucose = sensorUpdate.trend.last {
                         sendUpdate(glucose: newestGlucose)
+                    } else {
+                        sendEmptyGlucoseUpdate()
                     }
-                    
+
                     resetBuffer()
                 } catch {
                     resetBuffer()
@@ -484,87 +517,6 @@ fileprivate func translateError(errorCode: Int) -> String {
 
     default:
         return ""
-    }
-}
-
-fileprivate class KalmanFilter {
-    /// Set the process noise R
-    var processNoise: Double
-    
-    /// measurement noise Q
-    var measurementNoise: Double
-    
-    private let stateVector: Double
-    private let controlVector: Double
-    private let measurementVector: Double
-    
-    private var covariance: Double? = nil
-    private var estimatedSignal: Double? = nil
-    
-    /// Create 1-dimensional kalman filter
-    ///
-    /// - Parameters:
-    ///   - processNoise: Process noise
-    ///   - measurementNoise: Measurement noise
-    ///   - stateVector: State vector
-    ///   - controlVector: Control vector
-    ///   - measurementVector: Measurement vector
-    init(processNoise: Double = 1.0, measurementNoise: Double = 1.0, stateVector: Double = 1.0, controlVector: Double = 0.0, measurementVector: Double = 1) {
-        self.processNoise = processNoise
-        self.measurementNoise = measurementNoise
-        self.stateVector = stateVector
-        self.controlVector = controlVector
-        self.measurementVector = measurementVector
-    }
-    
-    /// Filter a new value
-    ///
-    /// - Parameters:
-    ///   - measurement: Measurement
-    ///   - control: Control
-    /// - Returns: New filter value
-    func filter(measurement: Double, control: Int = 0) -> Double {
-        if (self.estimatedSignal == nil) {
-            self.estimatedSignal = (1 / self.measurementVector) * measurement
-            self.covariance = (1 / self.measurementVector) * self.measurementNoise * (1 / self.measurementVector)
-        } else {
-            // Compute prediction
-            let predSignal = self.predict(control: control)!
-            let predCov = self.uncertainty!
-            
-            // Kalman gain
-            let gain = predCov * self.measurementVector * (1 / ((self.measurementVector * predCov * self.measurementVector) + self.measurementNoise))
-            
-            // Correction
-            self.estimatedSignal = predSignal + gain * (measurement - (self.measurementVector * predSignal))
-            self.covariance = predCov - (gain * self.measurementVector * predCov)
-        }
-        return self.estimatedSignal!
-    }
-    
-    /// Predict next value
-    ///
-    /// - Parameter control: Control
-    /// - Returns: Predicted value
-    func predict(control: Int = 0) -> Double? {
-        guard let estimation = self.estimatedSignal else {
-            // Return nil if there is no estimation set
-            return nil
-        }
-        return (self.stateVector * estimation) + (self.controlVector * Double(control))
-    }
-    
-    /// Return uncertainty of filter. `nil` in case no covariance was set.
-    var uncertainty: Double? {
-        guard let cov = self.covariance else {
-            return nil
-        }
-        return ((self.stateVector * cov) * self.stateVector) + self.processNoise
-    }
-    
-    /// last filtered measurement
-    var lastMeasurement: Double? {
-        return self.estimatedSignal
     }
 }
 

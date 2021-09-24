@@ -13,22 +13,21 @@ public class SensorGlucose: CustomStringConvertible, Codable {
     public let id: Int
     public let timestamp: Date
     public let glucoseValue: Int
-    
+
     public var lowerLimits: [Int] = [AppConfig.MinReadableGlucose]
     public var upperLimits: [Int] = [AppConfig.MaxReadableGlucose]
     public var minuteChange: Double? = nil
-    public var smoothedGlucoseValue: Int? = nil
-    
+
     public var trend: SensorTrend {
         get {
             if let minuteChange = minuteChange {
                 return SensorTrend(slope: minuteChange)
             }
-            
+
             return .unknown
         }
     }
-    
+
     public var glucoseFiltered: Int {
         get {
             if let lowerLimit = lowerLimits.max(), glucoseValue < lowerLimit {
@@ -40,11 +39,11 @@ public class SensorGlucose: CustomStringConvertible, Codable {
             return glucoseValue
         }
     }
-    
+
     private let rawSensorValue: Double?
     private let rawTemperature: Double?
     private let rawTemperatureAdjustment: Double?
-    
+
     public init(glucose: Int) {
         self.id = 0
         self.timestamp = Date()
@@ -54,7 +53,7 @@ public class SensorGlucose: CustomStringConvertible, Codable {
         self.rawTemperature = nil
         self.rawTemperatureAdjustment = nil
     }
-    
+
     public init(timestamp: Date, glucose: Int) {
         self.id = 0
         self.timestamp = timestamp.rounded(on: 1, .minute)
@@ -85,7 +84,7 @@ public class SensorGlucose: CustomStringConvertible, Codable {
     }
 
     public var description: String {
-        return "\(timestamp.localTime): \(glucoseFiltered.description) \(trend.description) (kalman: \(smoothedGlucoseValue), lowerLimits: \(lowerLimits), upperLimits: \(upperLimits))"
+        return "\(timestamp.localTime) \(glucoseFiltered.description) \(trend.description) (lowerLimits: \(lowerLimits), upperLimits: \(upperLimits))"
     }
 }
 

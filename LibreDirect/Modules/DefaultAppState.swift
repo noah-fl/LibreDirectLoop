@@ -21,12 +21,12 @@ public struct DefaultAppState: AppState {
             UserDefaults.appGroup.alarmLow = alarmLow
         }
     }
-    
+
     public var alarmSnoozeUntil: Date?
     public var connectionError: String?
     public var connectionErrorTimeStamp: Date?
     public var connectionState: SensorConnectionState = .disconnected
-    
+
     public var glucoseUnit: GlucoseUnit = .mgdL {
         didSet {
             UserDefaults.appGroup.glucoseUnit = glucoseUnit
@@ -39,7 +39,9 @@ public struct DefaultAppState: AppState {
             UserDefaults.appGroup.lastGlucose = glucoseValues.last
         }
     }
-    
+
+    public var missedReadings: Int = 0
+
     public var nightscoutUpload: Bool = false {
         didSet {
             UserDefaults.appGroup.nightscoutUpload = nightscoutUpload
@@ -68,11 +70,11 @@ public struct DefaultAppState: AppState {
         if let alarmHigh = UserDefaults.appGroup.alarmHigh {
             self.alarmHigh = alarmHigh
         }
-        
+
         if let alarmLow = UserDefaults.appGroup.alarmLow {
             self.alarmLow = alarmLow
         }
-        
+
         self.glucoseValues = UserDefaults.appGroup.glucoseValues
         self.nightscoutUpload = UserDefaults.appGroup.nightscoutUpload
         self.nightscoutApiSecret = UserDefaults.appGroup.nightscoutApiSecret

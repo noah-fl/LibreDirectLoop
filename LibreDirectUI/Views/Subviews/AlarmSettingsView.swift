@@ -11,25 +11,15 @@ struct AlarmSettingsView: View {
     @EnvironmentObject var store: AppStore
 
     var body: some View {
-        
-        GroupBox(label: Text("Alarm Settings").padding(.bottom).foregroundColor(.accentColor)) {
-            NumberSelectorView(
-                key: LocalizedString("Lower Limit", comment: ""),
-                value: store.state.alarmLow,
-                displayValue: store.state.alarmLow.asGlucose(unit: store.state.glucoseUnit, withUnit: true),
-                completionHandler: { (value) -> Void in
-                    store.dispatch(.setAlarmLow(value: value))
-                }
-            )
 
-            NumberSelectorView(
-                key: LocalizedString("Upper Limit", comment: ""),
-                value: store.state.alarmHigh,
-                displayValue: store.state.alarmHigh.asGlucose(unit: store.state.glucoseUnit, withUnit: true),
-                completionHandler: { (value) -> Void in
-                    store.dispatch(.setAlarmHigh(value: value))
-                }
-            )
+        GroupBox(label: Text("Alarm Settings").padding(.bottom).foregroundColor(.accentColor)) {
+            NumberSelectorView(key: LocalizedString("Lower Limit", comment: ""), value: store.state.alarmLow, displayValue: store.state.alarmLow.asGlucose(unit: store.state.glucoseUnit, withUnit: true)) { (value) -> Void in
+                store.dispatch(.setAlarmLow(value: value))
+            }
+
+            NumberSelectorView(key: LocalizedString("Upper Limit", comment: ""), value: store.state.alarmHigh, displayValue: store.state.alarmHigh.asGlucose(unit: store.state.glucoseUnit, withUnit: true)) { (value) -> Void in
+                store.dispatch(.setAlarmHigh(value: value))
+            }
         }
     }
 }

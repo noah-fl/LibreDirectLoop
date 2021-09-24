@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  LibreDirectView.swift
 //  LibreDirect
 //
 //  Created by Reimar Metzen on 06.07.21.
@@ -32,7 +32,7 @@ struct LibreDirectView: View {
 
                 AlarmSnoozeView().padding([.horizontal])
 
-                ConnectionView(connectionState: store.state.connectionState, connectionError: store.state.connectionError, connectionErrorTimestamp: store.state.connectionErrorTimeStamp).padding([.top, .horizontal])
+                ConnectionView(connectionState: store.state.connectionState, connectionError: store.state.connectionError, connectionErrorTimestamp: store.state.connectionErrorTimeStamp, missedReadings: store.state.missedReadings).padding([.top, .horizontal])
                 LifetimeView(sensor: store.state.sensor).padding([.top, .horizontal])
                 DetailsView(sensor: store.state.sensor).padding([.top, .horizontal])
 
@@ -41,7 +41,7 @@ struct LibreDirectView: View {
                 ActionsView().padding([.top, .horizontal])
             }
         }
-        .navigationBarItems(leading: deleteButton, trailing: doneButton)
+            .navigationBarItems(leading: deleteButton, trailing: doneButton)
     }
 }
 

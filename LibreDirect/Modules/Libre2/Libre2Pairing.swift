@@ -26,7 +26,7 @@ class Libre2PairingService: NSObject, NFCTagReaderSessionDelegate, Libre2Pairing
 
     func pairSensor(completionHandler: @escaping Libre2PairingHandler) {
         self.completionHandler = completionHandler
-    
+
         if NFCTagReaderSession.readingAvailable {
             accessQueue.async {
                 self.session = NFCTagReaderSession(pollingOption: .iso15693, delegate: self, queue: self.nfcQueue)
